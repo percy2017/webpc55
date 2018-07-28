@@ -14,3 +14,12 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+Route::group(['prefix' => 'admin'], function () {
+    Voyager::routes();
+
+    Route::get('/project','ProjectController@index');
+    Route::get('/security','SecurityController@index');
+    Route::get('/sales','SalesController@index');
+});
