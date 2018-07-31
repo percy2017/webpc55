@@ -40,15 +40,16 @@ URI     : https://colorlib.com
             <div class="row">
                 <div class="col-md-12">
                     <nav class="navbar navbar-dark navbar-expand-lg">
-                        <a class="navbar-brand" href="index.html"><img src="images/logo.png" class="img-fluid" alt="logo"></a> <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
+                        <!-- <a class="navbar-brand" href="index.html"><img src="images/logo.png" class="img-fluid" alt="logo"></a> <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button> -->
+                        <a href="{{ URL('/admin') }}" class="btn btn-outline-light my-3 my-sm-0 ml-lg-3">LoginWeb</a>
                         <div class="collapse navbar-collapse" id="navbar">
                             <ul class="navbar-nav ml-auto">
                                 <li class="nav-item"> <a class="nav-link active" href="#home">INICIO <span class="sr-only">(current)</span></a> </li>
                                 <li class="nav-item"> <a class="nav-link" href="#features">GENERALIDADES</a> </li>
                                 <li class="nav-item"> <a class="nav-link" href="#gallery">CAPTURAS</a> </li>
-                                <!-- <li class="nav-item"> <a class="nav-link" href="#pricing">PRICING</a> </li>
-                                <li class="nav-item"> <a class="nav-link" href="#contact">CONTACT</a> </li> -->
-                                <li class="nav-item"><a href="{{ URL('/admin') }}" class="btn btn-outline-light my-3 my-sm-0 ml-lg-3">Login</a></li>
+                                <li class="nav-item"> <a class="nav-link" href="#pricing">Registro</a> </li>
+                                <!--<li class="nav-item"> <a class="nav-link" href="#contact">CONTACT</a> </li> -->
+                                <li class="nav-item"><a href="{{ URL('/admin/profile') }}" class="btn btn-outline-light my-3 my-sm-0 ml-lg-3">Ingresar</a></li>
                             </ul>
                         </div>
                     </nav>
@@ -361,14 +362,14 @@ URI     : https://colorlib.com
     </div>
     <!-- // end .section -->
 
-    <!-- <div class="section" id="pricing">
+     <div class="section" id="pricing">
         <div class="container">
             <div class="section-title">
-                <small>PRICING</small>
-                <h3>Upgrade to Pro</h3>
+                <small>Nuevo</small>
+                <h3>Usuario</h3>
             </div>
 
-            <div class="card-deck">
+            <!-- <div class="card-deck">
                 <div class="card pricing">
                     <div class="card-head">
                         <small class="text-primary">PERSONAL</small>
@@ -417,13 +418,84 @@ URI     : https://colorlib.com
                         <a href="#" class="btn btn-primary btn-lg btn-block">Choose this Plan</a>
                     </div>
                 </div>
-            </div>
+            </div> -->
             <!-- // end .pricing -->
 
+             <!-- <div class="row">
+                <div class="col-xs-12"> -->
+                    <!-- <div class="panel panel-default"> -->
+                        <!-- <div class="pan el-heading">Register</div> -->
+
+                        <div align="center">
+                            <form class="form-horizontal" method="POST" action="{{ route('register') }}">
+                                {{ csrf_field() }}
+
+                                <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
+                                    <label for="name" class="col-md-4 control-label">Nombre</label>
+
+                                    <div class="col-md-6">
+                                        <input id="name" type="text" class="form-control" name="name" value="{{ old('name') }}" required autofocus>
+
+                                        @if ($errors->has('name'))
+                                            <span class="help-block">
+                                                <strong>{{ $errors->first('name') }}</strong>
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+                                    <label for="email" class="col-md-4 control-label">Correo Electronico</label>
+
+                                    <div class="col-md-6">
+                                        <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required>
+
+                                        @if ($errors->has('email'))
+                                            <span class="help-block">
+                                                <strong>{{ $errors->first('email') }}</strong>
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="form-group{{ $errors->has('password') ? ' has-error' : '' }}">
+                                    <label for="password" class="col-md-4 control-label">Password</label>
+
+                                    <div class="col-md-6">
+                                        <input id="password" type="password" class="form-control" name="password" required>
+
+                                        @if ($errors->has('password'))
+                                            <span class="help-block">
+                                                <strong>{{ $errors->first('password') }}</strong>
+                                            </span>
+                                        @endif
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="password-confirm" class="col-md-4 control-label">Confirm Password</label>
+
+                                    <div class="col-md-6">
+                                        <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-md-6 col-md-offset-4">
+                                        <button type="submit" class="btn btn-primary">
+                                            Entrar
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    <!-- </div> -->
+                <!-- </div>
+            </div> -->
 
         </div>
 
-    </div> -->
+    </div>
     <!-- // end .section -->
 
 
