@@ -14,17 +14,19 @@
     @endsection
 
     @section('content')
+
     <div class="page-content browse container-fluid">
         @include('voyager::alerts')
         <div class="row">
             <div class="col-md-12">
                 <div class="panel panel-bordered">
                     <div class="panel-body">
-                        <form action="#" method="post">
+                        <form action="{{ route('pedidos.storage') }}" method="post">
+                            {{ csrf_field() }}
                             <div class="col-xs-12 col-md-6">
                                 <div class="form-group">
                                     <label for="">Proyectos</label>
-                                    <select name="proyecto_id" id="" class="form-control">
+                                    <select name="proyecto_id" id="" class="form-control select2">
                                         @foreach($proyectos as $item)
                                             <option value="{{ $item->id }}">{{ $item->nombre }}</option>
                                         @endforeach
@@ -33,7 +35,7 @@
                                
                                 <div class="form-group">
                                     <label for="">Proveedores</label>
-                                    <select name="proveedor_id" id="" class="form-control">
+                                    <select name="proveedor_id" id="" class="form-control select2">
                                         @foreach($proveedores as $item)
                                             <option value="{{ $item->id }}">{{ $item->nombre }}</option>
                                         @endforeach
@@ -49,7 +51,7 @@
                             <div class="col-xs-12 col-md-6">
                                 <div class="form-group">
                                     <label for="">Tipo de pedido</label>
-                                    <select name="tipo_id" id="" class="form-control">
+                                    <select name="tipo_id" id="" class="form-control select2">
                                         @foreach($tipos as $item)
                                             <option value="{{ $item->id }}">{{ $item->nombre }}</option>
                                         @endforeach
@@ -58,7 +60,7 @@
 
                                 <div class="form-group">
                                     <label for="">Metodo de Pago</label>
-                                        <select name="tipo_id" id="" class="form-control">
+                                        <select name="pago_id" id="" class="form-control select2">
                                             @foreach($pagos as $item)
                                                 <option value="{{ $item->id }}">{{ $item->nombre }}</option>
                                             @endforeach
@@ -67,26 +69,60 @@
 
                                 <div class="form-group">
                                     <label for="">Observaciones</label>
-                                    <textarea name="observaciones" id="" rows="3" class="form-control"></textarea>
+                                    <textarea name="observacion" id="" rows="3" class="form-control"></textarea>
                                 </div>
 
                             </div>
                             <div class="col-xs-12">
                                 <hr>
-                                <small>Items del Pedido</small>
                             </div>
                             <div class="col-xs-12">
-                                <a href="#" class="btn btn-primary">Agregar Item</a>
-                                
+                                <button type="button" onclick="items_index('{{ route('items.index') }}')"  class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                                    Agrega items
+                                </button>
+                                <button type="button" onclick="detalle_pedido_trash('{{ route('detalle_pedido.trash') }}')"  class="btn btn-warning">
+                                    Vaciar
+                                </button>
+                                <div id="detalle_pedido_index"></div>
                             </div>
-                            
+                            <div class="col-xs-12">
+                                <hr>
+                            </div>
+                            <div align="right">                            
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+     <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="exampleModalLabel">Items</h3>
+                    <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button> -->
+                </div>
+                <div class="modal-body">
+                    <div id="items_ajax"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    
+                    <!-- <button type="button" onclick="items_index('{{ route('items.index') }}')" class="btn btn-primary">Lista</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     @endsection
+
+
 @else 
     @section('content')
         <div align="center">
@@ -96,6 +132,133 @@
         </div>
     @endsection
 @endif
-@section('javascrtipt')
 
+
+@section('javascript')
+    <script>
+
+        $(document).ready(function(){
+          
+            detalle_pedido_index();
+        });
+
+        //items--------------------------------------------------------
+        function items_index(urli)
+        {
+            $.ajax({
+                url: urli,
+                type: 'get',
+                success: function(result) {
+                    //$( "#weather-temp" ).html( "<strong>" + result + "</strong> degrees" );
+                    $('#items_ajax').empty().html(result);
+                }
+            });
+        }
+        
+        function items_create(urli)
+        {
+            $.ajax({
+                url: urli,
+                type: 'get',
+                success: function(result) {
+                    //$( "#weather-temp" ).html( "<strong>" + result + "</strong> degrees" );
+                    $('#items_ajax').empty().html(result);
+                }
+            });
+        }
+        function items_storage(urli)
+        {
+            var miform = $('#form-items-create');
+            var data = miform.serialize();
+            $.ajax({
+                url: urli,
+                type: 'post',
+                data: data,
+                success: function(result) {
+                    $('#exampleModal').modal('toggle');
+                    detalle_pedido_index();
+                }
+            });
+        }
+
+        function items_search(e)
+        {
+            if (e.keyCode == 13)
+            {
+                var criterio = document.getElementById('criterio').value;
+                // var criterio = $('#criterio').value;
+                 
+                var urli = '{{ route('items.search', 'criterio') }}';
+                    urli = urli.replace('criterio', criterio);
+                    $.ajax({
+                        url: urli,
+                        type: 'get',
+                        success: function(result) {
+                            //$( "#weather-temp" ).html( "<strong>" + result + "</strong> degrees" );
+                            $('#items_ajax').empty().html(result);
+                        }
+                    });
+            }
+            
+        }
+
+        //detalle_pedido---------------------------------------------------------------------
+
+        function detalle_pedido_index()
+        {
+            $.ajax({
+                url: '{{ route('detalle_pedido.index') }}',
+                type: 'get',
+                success: function(result) {
+                    $('#detalle_pedido_index').empty().html(result);
+                }
+            });
+        }
+        function detalle_pedido_storage(urli)
+        {
+            $.ajax({
+                url: urli,
+                type: 'get',
+                success: function(result) {
+                   
+                    $('#exampleModal').modal('toggle');
+                    detalle_pedido_index();
+                }
+            });
+        }
+        function detalle_pedido_trash(urli)
+        {
+            $.ajax({
+                url: urli,
+                type: 'get',
+                success: function(result) {
+                    detalle_pedido_index();
+                }
+            });
+        }
+        function detalle_pedido_delete(urli)
+        {
+          
+            $.ajax({
+                url: urli,
+                type: 'get',
+                success: function(result) {
+                    detalle_pedido_index();
+                }
+            });
+        }
+
+        $(document).on('click', '.pagination li a', function(event) {
+            event.preventDefault();
+            var url = $(this).attr("href");
+            $.ajax({
+                url: url,
+                type: 'get',
+                success: function(result) {
+                    //$( "#weather-temp" ).html( "<strong>" + result + "</strong> degrees" );
+                    $('#items_ajax').empty().html(result);
+                }
+            });
+        });
+    </script>
 @endsection

@@ -51,6 +51,8 @@
         </div>
     </div>
     @endsection
+
+
 @else 
     @section('content')
         <div align="center">
@@ -60,10 +62,12 @@
         </div>
     @endsection
 @endif
-@section('javascrtipt')
-    <script>
-        $(".clickable-row").click(function() {
-            window.location = $(this).data("href");
-        });
-    </script>
-@endsection
+
+ @section('javascript')
+        <script>
+            $(".clickable-row").click(function() {
+                window.location = $(this).data("href");
+                
+            });
+        </script>
+    @endsection

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 31-07-2018 a las 04:33:48
+-- Tiempo de generación: 02-08-2018 a las 04:50:54
 -- Versión del servidor: 5.6.38
 -- Versión de PHP: 7.2.1
 
@@ -33,7 +33,8 @@ CREATE TABLE `categorias` (
 --
 
 INSERT INTO `categorias` (`id`, `nombre`, `descrcipcion`, `created_at`, `updated_at`) VALUES
-(1, 'Categoria 1', 'Descripcion del categoria 1', '2018-07-31 02:50:45', '2018-07-31 02:50:45');
+(1, 'Categoria 1', 'Descripcion del categoria 1', '2018-07-31 02:50:45', '2018-07-31 02:50:45'),
+(2, 'Categoria 2', 'Descripción de la categoria 2', '2018-08-02 00:19:50', '2018-08-02 00:19:50');
 
 -- --------------------------------------------------------
 
@@ -281,20 +282,6 @@ INSERT INTO `data_types` (`id`, `name`, `slug`, `display_name_singular`, `displa
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `detalle_maquinarias`
---
-
-CREATE TABLE `detalle_maquinarias` (
-  `id` int(10) UNSIGNED NOT NULL,
-  `detallepedido_id` int(11) DEFAULT NULL,
-  `maquinaria_id` int(11) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `detalle_pedidos`
 --
 
@@ -306,16 +293,17 @@ CREATE TABLE `detalle_pedidos` (
   `precio` double DEFAULT '0',
   `subtotal` double DEFAULT '0',
   `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `maquinaria_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `detalle_pedidos`
 --
 
-INSERT INTO `detalle_pedidos` (`id`, `pedido_id`, `item_id`, `cantidad`, `precio`, `subtotal`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, 0, 0, 0, NULL, NULL),
-(2, 1, 2, 0, 0, 0, NULL, NULL);
+INSERT INTO `detalle_pedidos` (`id`, `pedido_id`, `item_id`, `cantidad`, `precio`, `subtotal`, `created_at`, `updated_at`, `maquinaria_id`) VALUES
+(1, 1, 1, 0, 0, 0, NULL, NULL, NULL),
+(2, 1, 2, 0, 0, 0, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -362,7 +350,9 @@ INSERT INTO `items` (`id`, `nombre`, `descripcion`, `categoria_id`, `unidad_id`,
 (1, 'Item 1', 'Descripcion del item 1', 1, 1, '2018-07-31 02:54:25', '2018-07-31 02:54:25', NULL),
 (2, 'Item 2', 'Descripcion del item 2', 1, 1, '2018-07-31 02:55:33', '2018-07-31 03:25:06', NULL),
 (3, 'Item 3', 'Descripcion del item 3', 1, 1, '2018-07-31 03:24:56', '2018-07-31 03:24:56', NULL),
-(4, 'Item 4', 'Descripcion del Item 4', 1, 1, '2018-07-31 03:25:30', '2018-07-31 03:25:30', NULL);
+(4, 'Item 4', 'Descripcion del Item 4', 1, 1, '2018-07-31 03:25:30', '2018-07-31 03:25:30', NULL),
+(5, 'Items 5', 'Descripcion del Items 5', 1, 1, '2018-08-02 00:36:00', '2018-08-02 00:36:00', NULL),
+(6, 'Items 6', 'Descrcipcion items 6', 2, 1, '2018-08-02 03:01:43', '2018-08-02 03:01:43', NULL);
 
 -- --------------------------------------------------------
 
@@ -583,7 +573,10 @@ CREATE TABLE `pedidos` (
 --
 
 INSERT INTO `pedidos` (`id`, `firma`, `referencia`, `estado_id`, `total`, `observacion`, `user_id`, `proveedor_id`, `proyecto_id`, `cheque_id`, `tipo_id`, `pago_id`, `created_at`, `updated_at`, `literal`) VALUES
-(1, NULL, 'Referencia del pedido 1', 1, 100, 'Observaciones del pedido 1', 1, 1, 1, NULL, 1, 1, '2018-07-31 02:45:37', '2018-07-31 02:45:37', 'cien');
+(1, NULL, 'Referencia del pedido 1', 1, 100, 'Observaciones del pedido 1', 1, 1, 1, NULL, 1, 1, '2018-07-31 02:45:37', '2018-07-31 02:45:37', 'cien'),
+(2, 'settings/August2018/HwLzmUSVBAPX5XOy2ZMz.png', 'asdf', 1, NULL, 'dfdf', 1, 1, 1, NULL, 1, NULL, '2018-08-02 04:44:01', '2018-08-02 04:44:01', NULL),
+(3, 'settings/August2018/HwLzmUSVBAPX5XOy2ZMz.png', 'asdf', 1, NULL, 'dfdf', 1, 1, 1, NULL, 1, NULL, '2018-08-02 04:45:22', '2018-08-02 04:45:22', NULL),
+(4, 'settings/August2018/HwLzmUSVBAPX5XOy2ZMz.png', 'rrrr', 1, NULL, 'ooo', 1, 1, 1, NULL, 1, 1, '2018-08-02 04:45:35', '2018-08-02 04:45:35', NULL);
 
 -- --------------------------------------------------------
 
@@ -919,7 +912,9 @@ INSERT INTO `settings` (`id`, `key`, `display_name`, `value`, `details`, `type`,
 (8, 'admin.loader', 'Admin Loader', '', '', 'image', 3, 'Admin'),
 (9, 'admin.icon_image', 'Admin Icon Image', '', '', 'image', 4, 'Admin'),
 (10, 'admin.google_analytics_client_id', 'Google Analytics Client ID (used for admin dashboard)', NULL, '', 'text', 1, 'Admin'),
-(11, 'admin.mensaje_no_autorizado', 'mensaje_no_autorizado', 'No tienes los permisos para ver esta interface, comunicate con el administrador.', NULL, 'text', 6, 'Admin');
+(11, 'admin.mensaje_no_autorizado', 'mensaje_no_autorizado', 'No tienes los permisos para ver esta interface, comunicate con el administrador.', NULL, 'text', 6, 'Admin'),
+(12, 'admin.paginate', 'paginate', '3', NULL, 'text', 7, 'Admin'),
+(13, 'admin.firma', 'firma', 'settings/August2018/HwLzmUSVBAPX5XOy2ZMz.png', NULL, 'image', 8, 'Admin');
 
 -- --------------------------------------------------------
 
@@ -1093,12 +1088,6 @@ ALTER TABLE `data_types`
   ADD UNIQUE KEY `data_types_slug_unique` (`slug`);
 
 --
--- Indices de la tabla `detalle_maquinarias`
---
-ALTER TABLE `detalle_maquinarias`
-  ADD PRIMARY KEY (`id`);
-
---
 -- Indices de la tabla `detalle_pedidos`
 --
 ALTER TABLE `detalle_pedidos`
@@ -1252,7 +1241,7 @@ ALTER TABLE `user_roles`
 -- AUTO_INCREMENT de la tabla `categorias`
 --
 ALTER TABLE `categorias`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `cheques`
@@ -1279,12 +1268,6 @@ ALTER TABLE `data_types`
   MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
--- AUTO_INCREMENT de la tabla `detalle_maquinarias`
---
-ALTER TABLE `detalle_maquinarias`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
-
---
 -- AUTO_INCREMENT de la tabla `detalle_pedidos`
 --
 ALTER TABLE `detalle_pedidos`
@@ -1300,7 +1283,7 @@ ALTER TABLE `estados`
 -- AUTO_INCREMENT de la tabla `items`
 --
 ALTER TABLE `items`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `lugares`
@@ -1342,7 +1325,7 @@ ALTER TABLE `pagos`
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `permissions`
@@ -1372,7 +1355,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT de la tabla `settings`
 --
 ALTER TABLE `settings`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT de la tabla `tipos`
