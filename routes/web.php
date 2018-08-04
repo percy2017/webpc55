@@ -24,14 +24,20 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/project/pedidos','ProjectController@pedidos_index')->name('pedidos.index');
         Route::get('/project/pedidos/create','ProjectController@pedidos_create')->name('pedidos.create');
         Route::post('/project/pedidos/storage','ProjectController@pedidos_storage')->name('pedidos.storage');
+        Route::get('/project/pedidos/edit/{id}','ProjectController@pedidos_edit')->name('pedidos.edit');
+        Route::get('/project/pedidos/estado/{id}/{estado}','ProjectController@pedidos_estado')->name('pedidos.estado');
+        Route::get('/project/pedidos/cola','ProjectController@pedidos_cola')->name('pedidos.cola');
+        Route::get('/project/pedidos/cola/filtros/{pedido_id}','ProjectController@pedidos_filtros')->name('pedidos.filtros');
+        Route::post('/project/pedidos/final','ProjectController@pedidos_final')->name('pedidos.final');
         Route::get('/project/items/index','ProjectController@items_index')->name('items.index');
-        Route::get('/project/items/create','ProjectController@items_create')->name('items.create');
+        Route::get('/project/items/create/{criterip}','ProjectController@items_create')->name('items.create');
         Route::get('/project/items/search/{criterio}','ProjectController@items_search')->name('items.search');
         Route::post('/project/items/storage','ProjectController@items_storage')->name('items.storage');
         Route::get('/project/detalle_pedido/storage/{item_id}','ProjectController@detalle_pedido_storage')->name('detalle_pedido.storage');
         Route::get('/project/detalle_pedido/index','ProjectController@detalle_pedido_index')->name('detalle_pedido.index');
         Route::get('/project/detalle_pedido/trash','ProjectController@detalle_pedido_trash')->name('detalle_pedido.trash');
         Route::get('/project/detalle_pedido/delete/{item_id}','ProjectController@detalle_pedido_delete')->name('detalle_pedido.delete');
+        Route::get('/project/detalle_pedido/edit/{item_id}/{campo}/{valor}','ProjectController@detalle_pedido_edit')->name('detalle_pedido.edit');
         
     Route::get('/security','SecurityController@index');
     Route::get('/sales','SalesController@index');

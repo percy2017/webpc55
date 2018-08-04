@@ -1,4 +1,4 @@
-<input type="search"  id="criterio" onkeypress="return items_search(event)"  class="form-control" placeholder="escribe el criterio..">
+<input type="search"  id="criterio" onkeypress="return items_search(event)"  class="form-control" placeholder="escribe el criterio.." value="{{ $criterio }}">
 <br>
 <div class="table-responsive">
     <table class="table table-hover">
@@ -27,7 +27,7 @@
             @else
             <tr>
                 <td>
-                    <button type="button" onclick="items_create('{{ route('items.create') }}')" class="btn btn-primary">Nuevo</button>
+                    <button type="button" onclick="items_create('{{ route('items.create', $criterio) }}')" class="btn btn-primary">Nuevo</button>
                 </td>
             </tr>
             @endif

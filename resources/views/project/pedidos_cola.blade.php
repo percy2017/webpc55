@@ -8,9 +8,9 @@
     @section('page_header')
     <div class="container-fluid">
         <h1 class="page-title">
-            <i class="voyager-pen"></i> Pedidos
+            <i class="voyager-pen"></i> Pedidos en Cola
         </h1>
-        <a href="{{ route('pedidos.create') }}" class="btn btn-primary">Nuevo</a>
+        
     </div>
     @endsection
 
@@ -21,8 +21,8 @@
             <div class="col-md-12">
                 <div class="panel panel-bordered">
                     <div class="panel-body">
-                    <input type="search"  id="criterio" onkeypress="return items_search(event)"  class="form-control" placeholder="escribe el criterio.." value="{{ $criterio }}">
-                    <br>
+                    
+                    
                         <div class="table-responsive">
                             <table id="dataTable" class="table table-hover">
                                 <thead>
@@ -30,17 +30,19 @@
                                         <th>#</th>
                                         <th>estado</th>
                                         <th>proyecto</th>
+                                        <th>Solicitador</th>
                                         <th>creado</th>
-                                        <th>monto</th>
+                                        <th>Total</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($pedidos as $item)
-                                        <tr class='clickable-row' data-href='{{ route('pedidos.edit', $item->id) }}'>
+                                        <tr class='clickable-row' data-href='{{ route('pedidos.filtros', $item->id) }}'>
                                             <td><a href="#">{{ $item->id }}</a></td>
                                             <td><a href="#"><label for="" class="{{ $item->color }}">{{ $item->estado }}</label></a></td>
                                             <td><a href="#">{{ $item->proyecto }}</a></td>
-                                            <td><a href="#">{{ $item->created_at }}</a></td>
+                                            <td><a href="#">{{ $item->name }}</a></td>
+                                            <td><a href="#">{{ $item->created_at }}</a><br><small>{{  \Carbon\Carbon::parse($item->created_at)->diffForHumans() }}</small></td>
                                             <td><a href="#">{{ number_format($item->total, 2, ',', ' ') }}</a></td>
                                         </tr>
                                     @endforeach      

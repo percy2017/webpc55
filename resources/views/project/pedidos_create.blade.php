@@ -23,8 +23,8 @@
                     <div class="panel-body">
                         <form action="{{ route('pedidos.storage') }}" method="post">
                             {{ csrf_field() }}
-                            <div class="col-xs-12 col-md-6">
-                                <div class="form-group">
+                            <!-- <div class="col-xs-12 col-md-6"> -->
+                                <div class="form-group col-md-4">
                                     <label for="">Proyectos</label>
                                     <select name="proyecto_id" id="" class="form-control select2">
                                         @foreach($proyectos as $item)
@@ -33,7 +33,7 @@
                                     </select>
                                 </div>
                                
-                                <div class="form-group">
+                                <div class="form-group col-md-4">
                                     <label for="">Proveedores</label>
                                     <select name="proveedor_id" id="" class="form-control select2">
                                         @foreach($proveedores as $item)
@@ -42,14 +42,7 @@
                                     </select>
                                 </div>
 
-                                <div class="form-group">
-                                    <label for="">Referencia</label>
-                                    <textarea name="referencia" id="" rows="3" class="form-control"></textarea>
-                                </div>
-
-                            </div>
-                            <div class="col-xs-12 col-md-6">
-                                <div class="form-group">
+                                <div class="form-group col-md-4">
                                     <label for="">Tipo de pedido</label>
                                     <select name="tipo_id" id="" class="form-control select2">
                                         @foreach($tipos as $item)
@@ -58,21 +51,31 @@
                                     </select>
                                 </div>
 
-                                <div class="form-group">
+                                <!-- <div class="form-group col-md-4">
                                     <label for="">Metodo de Pago</label>
                                         <select name="pago_id" id="" class="form-control select2">
                                             @foreach($pagos as $item)
                                                 <option value="{{ $item->id }}">{{ $item->nombre }}</option>
                                             @endforeach
                                     </select>
-                                </div>
+                                </div> -->
 
-                                <div class="form-group">
+                                <div class="form-group col-md-6">
                                     <label for="">Observaciones</label>
-                                    <textarea name="observacion" id="" rows="3" class="form-control"></textarea>
+                                    <textarea name="observacion" id="" rows="3" class="form-control">{{ setting('admin.pedidos_observacion_default') }}</textarea>
                                 </div>
 
-                            </div>
+                            <!-- </div> -->
+                            <!-- <div class="col-xs-12 col-md-6"> -->
+                                
+
+                                
+                                <div class="form-group col-md-6">
+                                    <label for="">Referencia</label>
+                                    <textarea name="referencia" id="" rows="3" class="form-control">{{ setting('admin.pedidos_referencia_default') }}</textarea>
+                                </div>
+
+                            <!-- </div> -->
                             <div class="col-xs-12">
                                 <hr>
                             </div>
@@ -248,6 +251,37 @@
             });
         }
 
+        function detalle_pedido_edit(item_id, campo, urli)
+        {
+            //alert(campo);
+            var valor;
+            switch (campo) {
+                case 'cantidad':
+                    valor = document.getElementById("cant-"+item_id).value;
+                    break;
+                case 'precio':
+                    valor = document.getElementById("precio-"+item_id).value;
+                    break;
+                default:
+                    break;
+            }
+            
+            if(valor)
+            {
+                urli = urli.replace('valor',valor);
+                //alert(urli);
+                $.ajax({
+                    url: urli,
+                    type: 'get',
+                    success: function(result) {
+                        //detalle_pedido_index();
+                    }
+                });
+            }
+            
+        }
+
+        //paginacion--------------------------------------------------------
         $(document).on('click', '.pagination li a', function(event) {
             event.preventDefault();
             var url = $(this).attr("href");

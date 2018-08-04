@@ -1,58 +1,69 @@
-<p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
+<h1>Proyecto Turiro - Webpc</h1>
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+## Introducción
+    El proyecto turiro es software realizado por la empresa LoginWeb, para la empresa Turiro SA.
+    para el control y seguimiento proyectos de Obras Civiles y ventas de Hormigon.
 
-## About Laravel
+-   Dominio:    http://turiro.com
+-   Correo:     soporte@turiro.com
+-   repositorio https://github.com/percy2017/turiro.git
+## Instalación
+-   <h2>Servidor Local</h2>Para realizar la instalacion local la applicacion necesita estos requerimientos.
+    -   PHP ^7.1.3
+    -   Composer
+    -   Git
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as:
+    Una Vez cumplidos estos requerimientos, clonar el repositorio.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+    <code>git clone https://github.com/percy2017/webpc55.git</code>
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications.
+    Descargar Dependencias
 
-## Learning Laravel
+    <code>composer install</code>
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of any modern web application framework, making it a breeze to get started learning the framework.
+    El el archivo .env, configurar su conexion a la base de datos Mysql y Restaurar desde el archivo <code>db_webpc.sql</code>
 
-If you're not in the mood to read, [Laracasts](https://laracasts.com) contains over 1100 video tutorials on a range of topics including Laravel, modern PHP, unit testing, JavaScript, and more. Boost the skill level of yourself and your entire team by digging into our comprehensive video library.
+    <code>DB_DATABASE=homestead</code><br>
+    <code>DB_USERNAME=homestead</code><br>
+    <code>DB_PASSWORD=secret</code>
 
-## Laravel Sponsors
+    Generar una Key
 
-We would like to extend our thanks to the following sponsors for helping fund on-going Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell):
+    <code>php artisan key:generate</code>
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
-- [User10](https://user10.com)
-- [Soumettre.fr](https://soumettre.fr/)
-- [CodeBrisk](https://codebrisk.com)
-- [1Forge](https://1forge.com)
-- [TECPRESSO](https://tecpresso.co.jp/)
-- [Pulse Storm](http://www.pulsestorm.net/)
-- [Runtime Converter](http://runtimeconverter.com/)
-- [WebL'Agence](https://weblagence.com/)
+    Login:
 
-## Contributing
+    <code>admin@admin.com</code><br>
+    <code>password</code><br>
+-   <h2>Servidor Compartido</h2>para realizar el despliegue en servidor compoartido, debes dividir el proyecto en 2 carpetas 
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    -   1.- webpc
+    -   2.- public_html
 
-## Security Vulnerabilities
+    El el archivo  /app/providers/AppServiceProvider.php agregar a en la funcion <code>function register()</code> la instruccion.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+    <code>
+        $this->app->bind('path.public', function() {
+            return base_path().'/public_html';
+        });
+    </code> 
 
-## License
+    El el archivo /public_html/index.php, debes reemplazar y agregar las instrucciones.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+    <code>
+        require __DIR__.'/../webpc/vendor/autoload.php';
+    </code>
+    <br>
+    <code>
+        $app = require_once __DIR__.'/../webpc/bootstrap/app.php';
+    </code>
+    <br>
+    <br>
+    <code>
+       $app->bind('path.public', function() {
+            return __DIR__;
+        });
+    </code>
+
+## Creditos
+    LoginWeb - Diseño y Desarrollo de Software.

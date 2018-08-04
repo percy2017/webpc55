@@ -18,11 +18,11 @@
     </div>
     <div class="form-group col-xs-12">
         <label for="">Nombre</label>
-        <input type="text" name="nombre" class="form-control">
+        <input type="text" name="nombre" class="form-control" value="{{ $criterio }}">
     </div>
     <div class="form-group col-xs-12">
         <label for="">Descripcion</label>
-        <textarea name="descripcion" id="" rows="2" class="form-control"></textarea>
+        <textarea name="descripcion" id="" rows="2" class="form-control">{{ setting('admin.items_descripcion_default') }}</textarea>
     </div>
     <div class="col-xs-12">
         <a onclick="items_storage('{{ route('items.storage') }}')" class="btn btn-success">Enviar</a>
