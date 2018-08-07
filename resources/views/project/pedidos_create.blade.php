@@ -2,7 +2,7 @@
 
 @section('css')
 @endsection
-<?php $permits = Voyager::can('browse_pedidos'); ?>
+<?php $permits = Voyager::can('mis_pedidos_project'); ?>
 
 @if($permits)
     @section('page_header')
@@ -81,7 +81,7 @@
                             </div>
                             <div class="col-xs-12">
                                 <button type="button" onclick="items_index('{{ route('items.index') }}')"  class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                                    Agrega items
+                                    Agregar items
                                 </button>
                                 <button type="button" onclick="detalle_pedido_trash('{{ route('detalle_pedido.trash') }}')"  class="btn btn-warning">
                                     Vaciar
@@ -90,8 +90,9 @@
                             </div>
                             <div class="col-xs-12">
                                 <hr>
-                            </div>
-                            <div align="right">                            
+                            </div> 
+                            <div align="right">     
+                                <input type="checkbox" name="aprobacion"> Enviar para Aprobación          
                                 <button type="submit" class="btn btn-primary">Guardar</button>
                             </div>
                         </form>
@@ -102,7 +103,7 @@
     </div>
 
      <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal modal-info fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">

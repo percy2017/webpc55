@@ -2,7 +2,7 @@
 
 @section('css')
 @endsection
-<?php $permits = Voyager::can('browse_pedidos'); ?>
+<?php $permits = Voyager::can('pedidos_cola_project'); ?>
 
 @if($permits)
     @section('page_header')
@@ -69,7 +69,7 @@
                                 </div>
 
                                 <div align="right">
-                                    <button type="submit" class="btn btn-primary">Enviar</button>
+                                    <button type="submit" class="btn btn-primary">Finalizar</button>
                                 </div>
                             </div>
                         </form>

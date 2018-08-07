@@ -21,7 +21,7 @@
                         <td>{{ $item->descripcion }}</td>
                         <td>{{ $item->categoria }}</td>
                         <td>{{ $item->unidad }}</td>
-                        <td><button onclick="detalle_pedido_storage('{{ route('detalle_pedido.storage',$item->id) }}')" class="btn btn-primary"><i class="voyager-pen"></i></button></td>
+                        <td><button onclick="detalle_pedido_storage('{{ route('detalle_pedido.storage',$item->id) }}')" class="btn btn-primary"><i class="voyager-forward"></i></button></td>
                     </tr>
                 @endforeach
             @else

@@ -21,6 +21,7 @@ Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 
     Route::get('/project','ProjectController@index');
+    Route::get('/project/report','ProjectController@report')->name('project.report');    
         Route::get('/project/pedidos','ProjectController@pedidos_index')->name('pedidos.index');
         Route::get('/project/pedidos/create','ProjectController@pedidos_create')->name('pedidos.create');
         Route::post('/project/pedidos/storage','ProjectController@pedidos_storage')->name('pedidos.storage');
@@ -29,10 +30,16 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/project/pedidos/cola','ProjectController@pedidos_cola')->name('pedidos.cola');
         Route::get('/project/pedidos/cola/filtros/{pedido_id}','ProjectController@pedidos_filtros')->name('pedidos.filtros');
         Route::post('/project/pedidos/final','ProjectController@pedidos_final')->name('pedidos.final');
+        Route::post('/project/pedidos/rechazo','ProjectController@pedidos_rechazo')->name('pedidos.rechazo');
+        Route::post('/project/pedidos/update','ProjectController@pedidos_update')->name('pedidos.update');
+        
+        
+
         Route::get('/project/items/index','ProjectController@items_index')->name('items.index');
         Route::get('/project/items/create/{criterip}','ProjectController@items_create')->name('items.create');
         Route::get('/project/items/search/{criterio}','ProjectController@items_search')->name('items.search');
         Route::post('/project/items/storage','ProjectController@items_storage')->name('items.storage');
+
         Route::get('/project/detalle_pedido/storage/{item_id}','ProjectController@detalle_pedido_storage')->name('detalle_pedido.storage');
         Route::get('/project/detalle_pedido/index','ProjectController@detalle_pedido_index')->name('detalle_pedido.index');
         Route::get('/project/detalle_pedido/trash','ProjectController@detalle_pedido_trash')->name('detalle_pedido.trash');

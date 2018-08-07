@@ -14,6 +14,11 @@ class ProjectController extends Controller
         $this->middleware('auth');
         if(!\Session::has('detalle_pedido')) \Session::put('detalle_pedido',array());
     }
+    //modulo-------------------------------------------------------------------------
+    public function report()
+    {
+        return view('project.report');
+    }
 
     //pedidos -----------------------------------------------------------------------------------
     public function pedidos_index()
@@ -22,10 +27,12 @@ class ProjectController extends Controller
                 ->join('users', 'users.id', 'pedidos.user_id')
                 ->join('estados', 'estados.id', 'pedidos.estado_id')
                 ->join('proyectos', 'proyectos.id', 'pedidos.proyecto_id')
-                ->select('pedidos.*', 'estados.nombre as estado', 'estados.color', 'proyectos.nombre as proyecto')
+                ->join('tipos', 'tipos.id', 'pedidos.tipo_id')
+                ->join('proveedores', 'proveedores.id', 'pedidos.proveedor_id')
+                ->select('pedidos.*', 'estados.nombre as estado', 'estados.color', 'proyectos.nombre as proyecto', 'tipos.nombre as tipo', 'proveedores.nombre as proveedor')
                 ->where('users.id', Auth::user()->id)
                 ->orderBy('pedidos.created_at', 'desc')
-                ->get();
+                ->paginate(setting('admin.paginate'));
         $criterio = '';
         return view('project.pedidos_index', compact('pedidos','criterio'));
     }
@@ -40,6 +47,8 @@ class ProjectController extends Controller
                     ->where('estado',true)
                     ->get();
         $pagos = DB::table('pagos')->get();
+
+        $this->detalle_pedido_trash();
 
         return view('project.pedidos_create', compact('proyectos','tipos','proveedores','pagos'));
     }
@@ -78,9 +87,18 @@ class ProjectController extends Controller
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now()
                 ]);
+                
+                DB::table('items')
+                    ->where('id', $item->id)
+                    ->update(['cantidad' => $item->cantidad, 'precio' => $item->precio]);
+
             }
     
             $this->detalle_pedido_trash();
+            if($datos->aprobacion)
+            {
+                $this->pedidos_estado($pedido->id, 2);
+            }
             return redirect()->route('pedidos.index')->with(['message' => 'Pedido realizado correctamente..', 'alert-type' => 'info']);  
 
         } else {
@@ -92,6 +110,11 @@ class ProjectController extends Controller
     public function pedidos_edit($id)
     {
         $pedido = DB::table('pedidos')->find($id);
+
+        $rechazo = DB::table('rechazos')
+                        ->where('rechazos.pedido_id', $id)
+                        ->orderBy('created_at','desc')
+                        ->first();
 
         $detalle_pedido = DB::table('detalle_pedidos')
                         ->join('pedidos', 'pedidos.id', 'detalle_pedidos.pedido_id')
@@ -106,15 +129,46 @@ class ProjectController extends Controller
         $proveedores = DB::table('proveedores')->get();
         $pagos = DB::table('pagos')->get();
 
-        return view('project.pedidos_edit', compact('proyectos','tipos','proveedores','pagos','pedido','detalle_pedido'));
+        
+        $this->detalle_pedido_trash();
+        $items = DB::table('items')
+                ->join('detalle_pedidos', 'detalle_pedidos.item_id', 'items.id')
+                ->select('items.id')
+                ->where('detalle_pedidos.pedido_id',$id)
+                ->get();
+        //return $items;
+        foreach($items as $item)
+        {
+            $new = DB::table('detalle_pedidos')
+                ->join('items', 'items.id', 'detalle_pedidos.item_id')
+                ->select('items.id','items.nombre','items.descripcion','detalle_pedidos.cantidad','detalle_pedidos.precio')
+                ->where([['detalle_pedidos.pedido_id', $id], ['detalle_pedidos.item_id',$item->id]])
+                ->first();
+
+            $arreglo= \Session::get('detalle_pedido');
+            $arreglo[$item->id] = $new;
+    
+            \Session::put('detalle_pedido',$arreglo);
+        }
+        
+        
+                
+        return view('project.pedidos_edit', compact('proyectos','tipos','proveedores','pagos','pedido','detalle_pedido','rechazo'));
     }
     public function pedidos_estado($id, $estado)
     {
         DB::table('pedidos')
             ->where('id', $id)
             ->update(['estado_id' => $estado]);
-
-        return redirect()->back()->with(['message' => 'Tu solicitud fue enviada corretamente..!', 'alert-type' => 'info']);    
+        
+        DB::table('estados_cambios')->insert([
+            'pedido_id' => $id,
+            'user_id' => Auth::user()->id,
+            'estado_id' => $estado,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
+        ]);
+        //return redirect()->back()->with(['message' => 'Tu solicitud fue enviada corretamente..!', 'alert-type' => 'info']);    
     }
 
     public function pedidos_cola()
@@ -142,7 +196,9 @@ class ProjectController extends Controller
         ->join('users', 'users.id', 'pedidos.user_id')
         ->join('estados', 'estados.id', 'pedidos.estado_id')
         ->join('proyectos', 'proyectos.id', 'pedidos.proyecto_id')
-        ->select('pedidos.*', 'estados.nombre as estado', 'estados.color', 'proyectos.nombre as proyecto', 'users.name')
+        ->join('tipos', 'tipos.id', 'pedidos.tipo_id')
+        ->join('proveedores', 'proveedores.id', 'pedidos.proveedor_id')
+        ->select('pedidos.*', 'estados.nombre as estado', 'estados.color', 'proyectos.nombre as proyecto', 'users.name', 'tipos.nombre as tipo', 'proveedores.nombre as proveedor')
         ->where('pedidos.estado_id',$estado_id) //estado aprobacion
         ->orderBy('pedidos.created_at', 'desc')
         ->get();
@@ -180,14 +236,81 @@ class ProjectController extends Controller
 
     public function pedidos_final(Request $datos)
     {
+        //return $datos;
         // return $datos;
         DB::table('pedidos')
             ->where('id', $datos->pedido_id)
             ->update(['estado_id' => 5, 'pago_id' => $datos->pago_id, 'datos' => $datos->datos]);
 
 
-        return redirect()->route('pedidos.cola')->with(['message' => 'Pedido finalizado corretamente..!', 'alert-type' => 'info']);  
+        //return redirect()->route('pedidos.cola')->with(['message' => 'Pedido finalizado corretamente..!', 'alert-type' => 'info']);  
+        return redirect()->back();
     }
+    public function pedidos_rechazo(Request $datos)
+    {
+
+        $this->pedidos_estado($datos->pedido_id, 3);
+
+        DB::table('rechazos')->insert([
+            'pedido_id' => $datos->pedido_id,
+            'motivo' => $datos->motivo,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
+        ]);
+        return redirect()->route('pedidos.cola')->with(['message' => 'Pedido rechazado..', 'alert-type' => 'info']);
+            
+    }
+
+    public function pedidos_update(Request $datos)
+    {
+        $detalle_pedido = \Session::get('detalle_pedido');
+        if (count($detalle_pedido)>0) 
+        {
+
+            DB::table('pedidos')
+                    ->where('id', $datos->pedido_id)
+                    ->update([
+                        'proyecto_id' => $datos->proyecto_id,
+                        'proveedor_id' => $datos->proveedor_id,
+                        'tipo_id' => $datos->tipo_id,
+                        'referencia' => $datos->referencia,
+                        'observacion' => $datos->observacion,
+                        'updated_at' => Carbon::now(),
+                        'total' => $this->total(),
+                        'literal' => NumerosEnLetras::convertir($this->total(),'Bolivianos',true)
+                    ]);
+                    
+            DB::table('detalle_pedidos')->where('pedido_id', $datos->pedido_id)->delete();
+
+            $items= \Session::get('detalle_pedido');
+            foreach($items as $item)
+            {
+                DB::table('detalle_pedidos')->insert([
+                    'pedido_id' => $datos->pedido_id,
+                    'item_id' => $item->id,
+                    'cantidad' => $item->cantidad,
+                    'precio' => $item->precio,
+                    'subtotal' => $item->cantidad * $item->precio,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ]);
+                
+                DB::table('items')
+                    ->where('id', $item->id)
+                    ->update(['cantidad' => $item->cantidad, 'precio' => $item->precio]);
+
+            }
+            $this->pedidos_estado($datos->pedido_id, 2);
+            $this->detalle_pedido_trash();
+            return redirect()->route('pedidos.index')->with(['message' => 'Pedido realizado correctamente..', 'alert-type' => 'info']);  
+
+        } else {
+            return redirect()->back()->with(['message' => 'Debes Ingresar Items al pedidos para poder guardar.', 'alert-type', 'warning']);
+        }
+
+    }
+
+    
     //Items----------------------------------------------------------------------------
     public function items_index()
     {
@@ -235,7 +358,7 @@ class ProjectController extends Controller
         $item_id = DB::table('items')->latest()->first();
         $this->detalle_pedido_storage($item_id->id);
     }
-    //detalle_pedido------------------------------------------------------------------
+    //detalle_pedido-----------------------------------------------------------------------------
     public function detalle_pedido_storage($item_id)
     {
         $new = DB::table('items')

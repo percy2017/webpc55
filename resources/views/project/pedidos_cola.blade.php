@@ -2,7 +2,7 @@
 
 @section('css')
 @endsection
-<?php $permits = Voyager::can('browse_pedidos'); ?>
+<?php $permits = Voyager::can('pedidos_cola_project'); ?>
 
 @if($permits)
     @section('page_header')
@@ -30,6 +30,8 @@
                                         <th>#</th>
                                         <th>estado</th>
                                         <th>proyecto</th>
+                                        <th>tipo</th>
+                                        <th>proveedor</th>
                                         <th>Solicitador</th>
                                         <th>creado</th>
                                         <th>Total</th>
@@ -41,6 +43,8 @@
                                             <td><a href="#">{{ $item->id }}</a></td>
                                             <td><a href="#"><label for="" class="{{ $item->color }}">{{ $item->estado }}</label></a></td>
                                             <td><a href="#">{{ $item->proyecto }}</a></td>
+                                            <td><a href="#">{{ $item->tipo }}</a></td>
+                                            <td><a href="#">{{ $item->proveedor }}</a></td>
                                             <td><a href="#">{{ $item->name }}</a></td>
                                             <td><a href="#">{{ $item->created_at }}</a><br><small>{{  \Carbon\Carbon::parse($item->created_at)->diffForHumans() }}</small></td>
                                             <td><a href="#">{{ number_format($item->total, 2, ',', ' ') }}</a></td>
@@ -54,6 +58,8 @@
             </div>
         </div>
     </div>
+
+    
     @endsection
 
 

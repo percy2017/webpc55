@@ -2,7 +2,7 @@
 
 @section('css')
 @endsection
-<?php $permits = Voyager::can('browse_pedidos'); ?>
+<?php $permits = Voyager::can('pedidos_cola_project'); ?>
 
 @if($permits)
     @section('page_header')
@@ -50,8 +50,8 @@
                         </div>
                         <hr>
                         <div align="center">
-                            <a href="{{ route('pedidos.estado', array($pedido->id, 4)) }}" class="btn btn-primary">Aprobar</a>
-                            <a href="#" class="btn btn-danger">Rechazar</a>
+                            <button data-toggle="modal" data-target="#aprobar_modal" class="btn btn-primary">Aprobar</button>
+                            <button data-toggle="modal" data-target="#comfir_modal" class="btn btn-danger">Rechazar</button>
                         </div>
                     
                     </div>
@@ -59,6 +59,47 @@
             </div>
         </div>
     </div>
+
+    <!-- rechazar -->
+    <div class="modal modal-primary fade" tabindex="-1" id="comfir_modal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <form action="{{ route('pedidos.rechazo') }}" method="post">
+                {{ csrf_field() }}
+                <input type="text" name="pedido_id" value="{{ $pedido->id }}" hidden>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"><i class="voyager-pen"></i> Esta seguro de rechazar ?</h4>
+                </div>
+                <div class="modal-body">
+                    
+                    <textarea name="motivo" id="" rows="6" class="form-control" placeholder="Escribe las motivo del rechazo"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary">Enviar</button>
+                    <button type="button" class="btn btn-default pull-right" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
+                </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <!-- Aprobar  -->
+    <div class="modal modal-info fade" tabindex="-1" id="aprobar_modal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"><i class="voyager-pen"></i> Esta seguro de aprobar ?</h4>
+                </div>
+                <div class="modal-footer">
+                    <button onclick="aprobar('{{ route('pedidos.estado', array($pedido->id, 4)) }}')" class="btn btn-primary">Aceptar</button>
+                    <button type="button" class="btn btn-default pull-right" data-dismiss="modal">{{ __('voyager::generic.cancel') }}</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
     @endsection
 
@@ -75,5 +116,16 @@
 
 
 @section('javascript')
-   
+   <script>
+    function aprobar(urli)
+    {
+        $.ajax({
+            type: "get",
+            url: urli,
+            success: function (response) {
+                location.href='{{ route('pedidos.cola') }}';
+            }
+        });
+    }
+   </script>
 @endsection

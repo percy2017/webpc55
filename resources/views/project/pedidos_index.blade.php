@@ -2,13 +2,13 @@
 
 @section('css')
 @endsection
-<?php $permits = Voyager::can('browse_pedidos'); ?>
+<?php $permits = Voyager::can('mis_pedidos_project'); ?>
 
 @if($permits)
     @section('page_header')
     <div class="container-fluid">
         <h1 class="page-title">
-            <i class="voyager-pen"></i> Pedidos
+            <i class="voyager-pen"></i> Mis Pedidos
         </h1>
         <a href="{{ route('pedidos.create') }}" class="btn btn-primary">Nuevo</a>
     </div>
@@ -30,6 +30,8 @@
                                         <th>#</th>
                                         <th>estado</th>
                                         <th>proyecto</th>
+                                        <th>tipo</th>
+                                        <th>proveedor</th>
                                         <th>creado</th>
                                         <th>monto</th>
                                     </tr>
@@ -40,12 +42,17 @@
                                             <td><a href="#">{{ $item->id }}</a></td>
                                             <td><a href="#"><label for="" class="{{ $item->color }}">{{ $item->estado }}</label></a></td>
                                             <td><a href="#">{{ $item->proyecto }}</a></td>
-                                            <td><a href="#">{{ $item->created_at }}</a></td>
+                                            <td><a href="#">{{ $item->tipo }}</a></td>
+                                            <td><a href="#">{{ $item->proveedor }}</a></td>
+                                            <td><a href="#">{{ $item->created_at }}</a><br><small>{{  \Carbon\Carbon::parse($item->created_at)->diffForHumans() }}</small></td>
                                             <td><a href="#">{{ number_format($item->total, 2, ',', ' ') }}</a></td>
                                         </tr>
                                     @endforeach      
                                 </tbody>
                             </table>
+                            <div align="center">
+                                {{ $pedidos->links() }}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -69,7 +76,6 @@
         <script>
             $(".clickable-row").click(function() {
                 window.location = $(this).data("href");
-                
             });
         </script>
     @endsection
