@@ -21,7 +21,7 @@
             <div class="col-md-12">
                 <div class="panel panel-bordered">
                     <div class="panel-body">
-                    <input type="search"  id="criterio" onkeypress="return items_search(event)"  class="form-control" placeholder="escribe el criterio.." value="{{ $criterio }}">
+                    <input type="search"  id="criterio" onkeypress="return pedidos_search(event)"  class="form-control" placeholder="escribe el criterio.." value="{{ $criterio }}">
                     <br>
                         <div class="table-responsive">
                             <table id="dataTable" class="table table-hover">
@@ -77,5 +77,28 @@
             $(".clickable-row").click(function() {
                 window.location = $(this).data("href");
             });
+
+            function pedidos_search(e)
+            {
+                if (e.keyCode == 13)
+                {
+                    var criterio = document.getElementById('criterio').value;
+                    // var criterio = $('#criterio').value;
+                    
+                    var urli = '{{ route('pedidos.search', 'criterio') }}';
+                        urli = urli.replace('criterio', criterio);
+                    if(criterio)
+                    {
+                        location.href= urli;
+                    }else{
+                        location.href= '{{ route('pedidos.index') }}';
+                    }
+                        
+                }
+                
+            }
+
         </script>
+
+
     @endsection

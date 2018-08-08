@@ -254,7 +254,7 @@
 
         function detalle_pedido_edit(item_id, campo, urli)
         {
-            //alert(campo);
+            // alert(campo);
             var valor;
             switch (campo) {
                 case 'cantidad':
@@ -263,12 +263,16 @@
                 case 'precio':
                     valor = document.getElementById("precio-"+item_id).value;
                     break;
+                case 'maquinaria_id':
+                    valor = document.getElementById("maquinaria_id").value;
+                    break;
                 default:
                     break;
             }
-            
+            //alert(valor);
             if(valor)
             {
+                //alert(urli);    
                 urli = urli.replace('valor',valor);
                 //alert(urli);
                 $.ajax({

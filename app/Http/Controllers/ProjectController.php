@@ -14,13 +14,56 @@ class ProjectController extends Controller
         $this->middleware('auth');
         if(!\Session::has('detalle_pedido')) \Session::put('detalle_pedido',array());
     }
+
     //modulo-------------------------------------------------------------------------
     public function report()
     {
         return view('project.report');
     }
+    public function report_query($table, $table_option)
+    {   
+        $query ='';
+        switch ($table) {
+            case '1':
+                switch ($table_option) {
+                    case '1':
+                        
+                        break;
+                    case '2':
+                        $pedidos = DB::table('pedidos')
+                                ->join('users', 'users.id', 'pedidos.user_id')
+                                ->join('estados', 'estados.id', 'pedidos.estado_id')
+                                ->join('proyectos', 'proyectos.id', 'pedidos.proyecto_id')
+                                ->join('tipos', 'tipos.id', 'pedidos.tipo_id')
+                                ->join('proveedores', 'proveedores.id', 'pedidos.proveedor_id')
+                                ->select('pedidos.*', 'estados.nombre as estado', 'estados.color', 'proyectos.nombre as proyecto', 'tipos.nombre as tipo', 'proveedores.nombre as proveedor')
+                                //->where('users.id', Auth::user()->id)
+                                ->orderBy('pedidos.created_at', 'desc')
+                                ->paginate(setting('admin.paginate'));
+                        $criterio = '';
+                        return view('project.report_query', compact('query','table','table_option','pedidos','criterio'));
+                        break;
+                    default:
+                        # code...
+                        break;
+                }
+                break;
+            case '2':
+                # code...
+                break;
+            case '3':
+                # code...
+                break;
+            default:
+                # code...
+                break;
+        }
+
+        return view('project.report_query', compact('query','table','table_option'));
+    }
 
     //pedidos -----------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------
     public function pedidos_index()
     {
         $pedidos = DB::table('pedidos')
@@ -35,6 +78,30 @@ class ProjectController extends Controller
                 ->paginate(setting('admin.paginate'));
         $criterio = '';
         return view('project.pedidos_index', compact('pedidos','criterio'));
+    }
+    public function pedidos_search($criterio)
+    {
+        //return $criterio;
+        if ($criterio) {
+            # code...
+            $pedidos = DB::table('pedidos')
+                ->join('users', 'users.id', 'pedidos.user_id')
+                ->join('estados', 'estados.id', 'pedidos.estado_id')
+                ->join('proyectos', 'proyectos.id', 'pedidos.proyecto_id')
+                ->join('tipos', 'tipos.id', 'pedidos.tipo_id')
+                ->join('proveedores', 'proveedores.id', 'pedidos.proveedor_id')
+                ->select('pedidos.*', 'estados.nombre as estado', 'estados.color', 'proyectos.nombre as proyecto', 'tipos.nombre as tipo', 'proveedores.nombre as proveedor')
+                ->where([['users.id', Auth::user()->id],['proyectos.nombre','like','%'.$criterio.'%']])
+                ->orWhere([['users.id', Auth::user()->id],['pedidos.total','=',$criterio]])
+                ->orderBy('pedidos.created_at', 'desc')
+                ->paginate(setting('admin.paginate'));
+        
+        return view('project.pedidos_index', compact('pedidos','criterio'));
+        }else
+        {
+            return redirect()->route('pedidos.index')->with(['message' => 'Debe establecer el criterio de busqueda..', 'alert-type' => 'info']);
+        }
+        
     }
     public function pedidos_create()
     {
@@ -84,13 +151,14 @@ class ProjectController extends Controller
                     'cantidad' => $item->cantidad,
                     'precio' => $item->precio,
                     'subtotal' => $item->cantidad * $item->precio,
+                    'maquinaria_id' =>  $item->maquinaria_id,
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now()
                 ]);
                 
                 DB::table('items')
                     ->where('id', $item->id)
-                    ->update(['cantidad' => $item->cantidad, 'precio' => $item->precio]);
+                    ->update(['cantidad' => $item->cantidad, 'precio' => $item->precio, 'maquinaria_id' => $item->maquinaria_id]);
 
             }
     
@@ -120,7 +188,7 @@ class ProjectController extends Controller
                         ->join('pedidos', 'pedidos.id', 'detalle_pedidos.pedido_id')
                         ->join('users', 'users.id', 'pedidos.user_id')
                         ->join('items', 'items.id', 'detalle_pedidos.item_id')
-                        ->select('items.*', 'detalle_pedidos.cantidad', 'detalle_pedidos.precio')
+                        ->select('items.*', 'detalle_pedidos.cantidad', 'detalle_pedidos.precio', 'detalle_pedidos.maquinaria_id')
                         ->where([['detalle_pedidos.pedido_id', $id],['users.id', Auth::user()->id]])
                         ->get();
 
@@ -141,7 +209,7 @@ class ProjectController extends Controller
         {
             $new = DB::table('detalle_pedidos')
                 ->join('items', 'items.id', 'detalle_pedidos.item_id')
-                ->select('items.id','items.nombre','items.descripcion','detalle_pedidos.cantidad','detalle_pedidos.precio')
+                ->select('items.id','items.nombre','items.descripcion','detalle_pedidos.cantidad','detalle_pedidos.precio', 'detalle_pedidos.maquinaria_id')
                 ->where([['detalle_pedidos.pedido_id', $id], ['detalle_pedidos.item_id',$item->id]])
                 ->first();
 
@@ -225,8 +293,9 @@ class ProjectController extends Controller
                 return view('project.pedidos_aprobar', compact('pedido','detalle_pedido'));
                 break;
             case 4:
-            $pagos = DB::table('pagos')->orderBy('pagos.id','desc')->get();
-            return view('project.pedidos_elaborar', compact('pedido','detalle_pedido','pagos'));
+                $pagos = DB::table('pagos')->orderBy('pagos.id','desc')->get();
+                return view('project.pedidos_elaborar', compact('pedido','detalle_pedido','pagos'));
+                break;
             default:
                 # code...
                 break;
@@ -243,8 +312,8 @@ class ProjectController extends Controller
             ->update(['estado_id' => 5, 'pago_id' => $datos->pago_id, 'datos' => $datos->datos]);
 
 
-        //return redirect()->route('pedidos.cola')->with(['message' => 'Pedido finalizado corretamente..!', 'alert-type' => 'info']);  
-        return redirect()->back();
+        return redirect()->route('pedidos.cola')->with(['message' => 'Pedido finalizado corretamente..!', 'alert-type' => 'info']);  
+        //return redirect()->back();
     }
     public function pedidos_rechazo(Request $datos)
     {
@@ -290,6 +359,7 @@ class ProjectController extends Controller
                     'item_id' => $item->id,
                     'cantidad' => $item->cantidad,
                     'precio' => $item->precio,
+                    'maquinaria_id' => $item->maquinaria_id,
                     'subtotal' => $item->cantidad * $item->precio,
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now()
@@ -297,12 +367,12 @@ class ProjectController extends Controller
                 
                 DB::table('items')
                     ->where('id', $item->id)
-                    ->update(['cantidad' => $item->cantidad, 'precio' => $item->precio]);
+                    ->update(['cantidad' => $item->cantidad, 'precio' => $item->precio, 'maquinaria_id' => $item->maquinaria_id]);
 
             }
             $this->pedidos_estado($datos->pedido_id, 2);
             $this->detalle_pedido_trash();
-            return redirect()->route('pedidos.index')->with(['message' => 'Pedido realizado correctamente..', 'alert-type' => 'info']);  
+            return redirect()->route('pedidos.index')->with(['message' => 'Pedido actualizado correctamente..', 'alert-type' => 'info']);  
 
         } else {
             return redirect()->back()->with(['message' => 'Debes Ingresar Items al pedidos para poder guardar.', 'alert-type', 'warning']);
@@ -311,7 +381,8 @@ class ProjectController extends Controller
     }
 
     
-    //Items----------------------------------------------------------------------------
+    //Items--------------------------------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------------------------------
     public function items_index()
     {
         $items = DB::table('items')
@@ -362,7 +433,7 @@ class ProjectController extends Controller
     public function detalle_pedido_storage($item_id)
     {
         $new = DB::table('items')
-                ->select('id','nombre','descripcion','cantidad','precio')
+                ->select('id','nombre','descripcion','cantidad','precio', 'maquinaria_id')
                 ->where('id',$item_id)
                 ->first();
 
@@ -373,8 +444,11 @@ class ProjectController extends Controller
     }
     public function detalle_pedido_index()
     {
-        $dp= \Session::get('detalle_pedido');   
-        return view('project.detalle_pedido_index', compact('dp'));
+    
+        $dp= \Session::get('detalle_pedido');
+        // return $dp;
+        $maquinarias = DB::table('maquinarias')->get();
+        return view('project.detalle_pedido_index', compact('dp', 'maquinarias'));
     }
     public function detalle_pedido_trash()
     {
@@ -396,6 +470,9 @@ class ProjectController extends Controller
                 break;
             case 'precio':
                 $items[$item_id]->precio = $valor;
+                break;
+            case 'maquinaria_id':
+                $items[$item_id]->maquinaria_id = $valor;
                 break;
             default:
                 # code...

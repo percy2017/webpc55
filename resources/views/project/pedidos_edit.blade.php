@@ -261,12 +261,15 @@
       {
           //alert(campo);
           var valor;
-          switch (campo) {
-              case 'cantidad':
+            switch (campo) {
+                case 'cantidad':
                   valor = document.getElementById("cant-"+item_id).value;
                   break;
-              case 'precio':
+                case 'precio':
                   valor = document.getElementById("precio-"+item_id).value;
+                  break;
+                case 'maquinaria_id':
+                  valor = document.getElementById("maquinaria_id").value;
                   break;
               default:
                   break;

@@ -21,7 +21,8 @@ Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 
     Route::get('/project','ProjectController@index');
-    Route::get('/project/report','ProjectController@report')->name('project.report');    
+    Route::get('/project/report','ProjectController@report')->name('project.report');
+    Route::get('/project/report/query/{table}/{table_option}','ProjectController@report_query')->name('project.query');   
         Route::get('/project/pedidos','ProjectController@pedidos_index')->name('pedidos.index');
         Route::get('/project/pedidos/create','ProjectController@pedidos_create')->name('pedidos.create');
         Route::post('/project/pedidos/storage','ProjectController@pedidos_storage')->name('pedidos.storage');
@@ -32,8 +33,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/project/pedidos/final','ProjectController@pedidos_final')->name('pedidos.final');
         Route::post('/project/pedidos/rechazo','ProjectController@pedidos_rechazo')->name('pedidos.rechazo');
         Route::post('/project/pedidos/update','ProjectController@pedidos_update')->name('pedidos.update');
-        
-        
+        Route::get('/project/pedidos/search/{criterio}','ProjectController@pedidos_search')->name('pedidos.search');
 
         Route::get('/project/items/index','ProjectController@items_index')->name('items.index');
         Route::get('/project/items/create/{criterip}','ProjectController@items_create')->name('items.create');
@@ -45,7 +45,10 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/project/detalle_pedido/trash','ProjectController@detalle_pedido_trash')->name('detalle_pedido.trash');
         Route::get('/project/detalle_pedido/delete/{item_id}','ProjectController@detalle_pedido_delete')->name('detalle_pedido.delete');
         Route::get('/project/detalle_pedido/edit/{item_id}/{campo}/{valor}','ProjectController@detalle_pedido_edit')->name('detalle_pedido.edit');
-        
+    //--------------------------------------------------------------------------------------------------------------        
     Route::get('/security','SecurityController@index');
     Route::get('/sales','SalesController@index');
+        Route::get('/sales/solicitudes','SalesController@solicitud_index')->name('solicitud.index');
+        Route::get('/sales/solicitudes/create','SalesController@solicitud_create')->name('solicitud.create');
+        Route::get('/sales/solicitudes/edit/{id}','SalesController@solicitud_edit')->name('solicitud.edit');
 });
