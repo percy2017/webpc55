@@ -22,24 +22,32 @@ class ProjectController extends Controller
     }
     public function report_query($table, $table_option)
     {   
-        
+        $query ='';
+        return $table;
         switch ($table) {
             case '1':
                 switch ($table_option) {
                     case '1':
-                        $proyectos = DB::table('proyectos')
-                        ->orderBy('created_at', 'desc')
-                        ->paginate(setting('admin.paginate'));
-                        $criterio = '';
-                        return view('project.report_query', compact('table','table_option','proyectos','criterio'));
-                
+                            $proyectos = DB::table('proyectos')
+                                ->orderBy('created_at', 'desc')
+                                ->paginate(setting('admin.paginate'));
+                                return $proyectos;
+                                //return view('project.report_query', compact('query','table','table_option','proyectos'));
                         break;
                     case '2':
-                        $proyectos = DB::table('proyectos')
-                        ->orderBy('created_at', 'desc')
-                        ->paginate(setting('admin.paginate'));
+                        $pedidos = DB::table('pedidos')
+                                ->join('users', 'users.id', 'pedidos.user_id')
+                                ->join('estados', 'estados.id', 'pedidos.estado_id')
+                                ->join('proyectos', 'proyectos.id', 'pedidos.proyecto_id')
+                                ->join('tipos', 'tipos.id', 'pedidos.tipo_id')
+                                ->join('proveedores', 'proveedores.id', 'pedidos.proveedor_id')
+                                ->select('pedidos.*', 'estados.nombre as estado', 'estados.color', 'proyectos.nombre as proyecto', 'tipos.nombre as tipo', 'proveedores.nombre as proveedor')
+                                //->where('users.id', Auth::user()->id)
+                                ->orderBy('pedidos.created_at', 'desc')
+                                ->paginate(setting('admin.paginate'));
                         $criterio = '';
-                        return view('project.report_query', compact('table','table_option','proyectos','criterio'));                
+                        
+                        return view('project.report_query', compact('query','table','table_option','pedidos','criterio'));
                         break;
                     default:
                         # code...
@@ -47,26 +55,7 @@ class ProjectController extends Controller
                 }
                 break;
             case '2':
-                switch ($table_option) {
-                    case '1':
-                        $pedidos = DB::table('pedidos')
-                        ->orderBy('created_at', 'desc')
-                        ->paginate(setting('admin.paginate'));
-                        $criterio = '';
-                        return view('project.report_query', compact('table','table_option','pedidos','criterio'));
-                
-                        break;
-                    case '2':
-                        $proyectos = DB::table('proyectos')
-                        ->orderBy('created_at', 'desc')
-                        ->paginate(setting('admin.paginate'));
-                        $criterio = '';
-                        return view('project.report_query', compact('table','table_option','proyectos','criterio'));                
-                        break;
-                    default:
-                        # code...
-                        break;
-                }
+                # code...
                 break;
             case '3':
                 # code...
@@ -76,7 +65,7 @@ class ProjectController extends Controller
                 break;
         }
 
-        return view('project.report_query', compact('query','table','table_option'));
+        //return view('project.report_query', compact('query','table','table_option'));
     }
 
     //pedidos -----------------------------------------------------------------------------------
@@ -169,7 +158,6 @@ class ProjectController extends Controller
                     'precio' => $item->precio,
                     'subtotal' => $item->cantidad * $item->precio,
                     'maquinaria_id' =>  $item->maquinaria_id,
-                    'aux_id' =>  $item->aux_id,
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now()
                 ]);
@@ -216,27 +204,23 @@ class ProjectController extends Controller
         $pagos = DB::table('pagos')->get();
 
         
-        //vaciamos el array.
         $this->detalle_pedido_trash();
-
-        //recupero todos los detalles del pedido
-        $dp = DB::table('detalle_pedidos')
+        $items = DB::table('items')
+                ->join('detalle_pedidos', 'detalle_pedidos.item_id', 'items.id')
+                ->select('items.id')
                 ->where('detalle_pedidos.pedido_id',$id)
                 ->get();
-   
-        foreach($dp as $item)
+        //return $items;
+        foreach($items as $item)
         {
-            //recuperamos (items * items) del pedido
             $new = DB::table('detalle_pedidos')
                 ->join('items', 'items.id', 'detalle_pedidos.item_id')
-                ->select('items.id','items.nombre','items.descripcion','detalle_pedidos.cantidad','detalle_pedidos.precio', 'detalle_pedidos.maquinaria_id','detalle_pedidos.aux_id')
-                //->where([['detalle_pedidos.pedido_id', $id], ['detalle_pedidos.item_id',$item->id]])
-                ->where('detalle_pedidos.aux_id', $item->aux_id)
+                ->select('items.id','items.nombre','items.descripcion','detalle_pedidos.cantidad','detalle_pedidos.precio', 'detalle_pedidos.maquinaria_id')
+                ->where([['detalle_pedidos.pedido_id', $id], ['detalle_pedidos.item_id',$item->id]])
                 ->first();
 
             $arreglo= \Session::get('detalle_pedido');
-            
-            $arreglo[$item->aux_id] = $new;
+            $arreglo[$item->id] = $new;
     
             \Session::put('detalle_pedido',$arreglo);
         }
@@ -300,16 +284,7 @@ class ProjectController extends Controller
 
     public function pedidos_filtros($pedido_id)
     {
-        $pedido = DB::table('pedidos')
-                ->join('users','users.id','pedidos.user_id')
-                ->select('pedidos.*', 'users.id as user_id','users.avatar','users.name')
-                ->where('pedidos.id',$pedido_id)
-                ->first();
-
-        $solicitar_cant = DB::table('pedidos')
-                        ->join('users','users.id','pedidos.user_id') 
-                        ->where('pedidos.user_id',$pedido->user_id)       
-                        ->count();
+        $pedido = DB::table('pedidos')->find($pedido_id);
 
         $detalle_pedido = DB::table('detalle_pedidos')
                         ->join('pedidos', 'pedidos.id', 'detalle_pedidos.pedido_id')
@@ -321,7 +296,7 @@ class ProjectController extends Controller
 
         switch ($pedido->estado_id) {
             case 2:
-                return view('project.pedidos_aprobar', compact('pedido','detalle_pedido','solicitar_cant'));
+                return view('project.pedidos_aprobar', compact('pedido','detalle_pedido'));
                 break;
             case 4:
                 $pagos = DB::table('pagos')->orderBy('pagos.id','desc')->get();
@@ -391,7 +366,6 @@ class ProjectController extends Controller
                     'cantidad' => $item->cantidad,
                     'precio' => $item->precio,
                     'maquinaria_id' => $item->maquinaria_id,
-                    'aux_id' => $item->aux_id,
                     'subtotal' => $item->cantidad * $item->precio,
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now()
@@ -461,31 +435,24 @@ class ProjectController extends Controller
         $item_id = DB::table('items')->latest()->first();
         $this->detalle_pedido_storage($item_id->id);
     }
-
     //detalle_pedido-----------------------------------------------------------------------------
-    //-------------------------------------------------------------------------------------------
     public function detalle_pedido_storage($item_id)
     {
-        $random = $this->random(10);
-        DB::table('items')
-        ->where('id', $item_id)
-        ->update(['aux_id' => $random]);
-
         $new = DB::table('items')
-                ->select('id','nombre','descripcion','cantidad','precio', 'maquinaria_id','aux_id')
+                ->select('id','nombre','descripcion','cantidad','precio', 'maquinaria_id')
                 ->where('id',$item_id)
                 ->first();
 
         $items= \Session::get('detalle_pedido');
-
-        $items[$random] = $new;
+        $items[$item_id] = $new;
   
         \Session::put('detalle_pedido',$items);
     }
     public function detalle_pedido_index()
     {
+    
         $dp= \Session::get('detalle_pedido');
-        //return $dp;
+        // return $dp;
         $maquinarias = DB::table('maquinarias')->get();
         return view('project.detalle_pedido_index', compact('dp', 'maquinarias'));
     }
@@ -503,8 +470,7 @@ class ProjectController extends Controller
     public function detalle_pedido_edit($item_id, $campo, $valor)
     {
         $items= \Session::get('detalle_pedido');
-        switch ($campo) 
-        {
+        switch ($campo) {
             case 'cantidad':
                 $items[$item_id]->cantidad = $valor;
                 break;
@@ -531,9 +497,5 @@ class ProjectController extends Controller
         }
         return $total;
     }
-
-    function random($length) { 
-        return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length); 
-    } 
 
 }

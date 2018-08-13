@@ -48,7 +48,19 @@ Route::group(['prefix' => 'admin'], function () {
     //--------------------------------------------------------------------------------------------------------------        
     Route::get('/security','SecurityController@index');
     Route::get('/sales','SalesController@index');
+    Route::get('/sales/report','SalesController@report')->name('sales.report');
         Route::get('/sales/solicitudes','SalesController@solicitud_index')->name('solicitud.index');
         Route::get('/sales/solicitudes/create','SalesController@solicitud_create')->name('solicitud.create');
         Route::get('/sales/solicitudes/edit/{id}','SalesController@solicitud_edit')->name('solicitud.edit');
+        Route::post('/sales/solicitudes/storage','SalesController@solicitud_storage')->name('solicitud.storage');
+
+        Route::post('/sales/ventas/storage','SalesController@ventas_storage')->name('ventas.storage');
+
+        Route::get('/sales/materiales','SalesController@materiales_index')->name('materiales.index');
+
+        Route::get('/sales/detalle_solictud/storage/{material_id}','SalesController@detalle_solicitud_storage')->name('ds.storage');
+        Route::get('/sales/detalle_solictud','SalesController@detalle_solicitud_index')->name('ds.index');
+        Route::get('/sales/detalle_solictud/delete/{material_id}','SalesController@detalle_solicitud_delete')->name('ds.delete');
+        Route::get('/sales/detalle_solictud/trash','SalesController@detalle_solicitud_trash')->name('ds.trash');
+        Route::get('/sales/detalle_solictud/edit/{id}/{cantidad}','SalesController@detalle_solicitud_edit')->name('ds.edit');
 });

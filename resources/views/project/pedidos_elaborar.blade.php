@@ -6,12 +6,12 @@
 
 @if($permits)
     @section('page_header')
-    <div class="container-fluid">
+    <!-- <div class="container-fluid">
         <h1 class="page-title">
             <i class="voyager-pen"></i> Pedido para elaboracion
         </h1>
         
-    </div>
+    </div> -->
     @endsection
 
     @section('content')
@@ -21,11 +21,16 @@
             <div class="col-md-12">
                 <div class="panel panel-bordered">
                     <div class="panel-body">
+                        <div class="col-xs-12" align="center">
+                            <!-- <h3>Pedido para elaboracion</h3> -->
+                            <font color="{{ config('voyager.primary_color') }}"><h3>Pedido para Elaboración</h3></font>
+                        </div>
+                        <div class="col-xs-12"><hr></div>
                         <form action="{{ route('pedidos.final') }}" method="POST">
                         {{ csrf_field() }}
                             <input type="text" name="pedido_id" value="{{ $pedido->id }}" hidden>
-                            <div class="form-group col-md-6">
-                                <label for="">Tipo de Pago</label>
+                            <div class="form-group col-md-6">                                
+                                <font color="{{ config('voyager.primary_color') }}">Tipo de Pago</font>
                                 <select name="pago_id" id="" class="form-control select2">
                                     @foreach($pagos as $item)
                                         <option value="{{ $item->id }}">{{ $item->nombre }}</option>
@@ -34,7 +39,8 @@
                             </div>
                             
                             <div class="form-group col-md-6">
-                                <label for="">Datos del Pago</label>
+                                
+                                <font color="{{ config('voyager.primary_color') }}">Datos del Pago</font>
                                 <textarea name="datos" id="" rows="3" class="form-control">{{ setting('admin.pedidos_datos_default') }}</textarea>
                             </div>
                                 
@@ -43,9 +49,9 @@
                                         <table class="table table-hover">
                                             <thead>
                                                 <tr>
-                                                    <th>id</th>
+                                                    <!-- <th>id</th> -->
                                                     <th>nombre</th>
-                                                    <th>descripcion</th>
+                                                    <!-- <th>descripcion</th> -->
                                                     <th>cantidad</th>
                                                     <th>precio</th>
                                                     <th>SubTotal</th>
@@ -54,12 +60,12 @@
                                             <tbody>
                                                 @foreach($detalle_pedido as $item)
                                                     <tr>
-                                                        <td>{{ $item->id }}</td>
-                                                        <td>{{ $item->nombre }}</td>
-                                                        <td>{{ $item->descripcion }}</td>
-                                                        <td>{{ $item->cantidad }}</td>
-                                                        <td>{{ $item->precio }}</td> 
-                                                        <td>{{ number_format($item->precio * $item->cantidad, 2, ',', ' ') }}</td> 
+                                                        <!-- <td>{{ $item->id }}</td> -->
+                                                        <td><font color="{{ config('voyager.primary_color') }}">{{ $item->nombre }}</font></td>
+                                                        <!-- <td>{{ $item->descripcion }}</td> -->
+                                                        <td><font color="{{ config('voyager.primary_color') }}">{{ $item->cantidad }}</font></td>
+                                                        <td><font color="{{ config('voyager.primary_color') }}">{{ $item->precio }}</font></td> 
+                                                        <td><font color="{{ config('voyager.primary_color') }}">{{ number_format($item->precio * $item->cantidad, 2, ',', ' ') }}</font></td> 
                                                     </tr>
                                                 @endforeach
                                         
@@ -67,11 +73,12 @@
                                         </table>
                                     </div>
                                 </div>
-
+                                <div class="col-xs-12"><hr></div>
                                 <div align="right">
                                     <button type="submit" class="btn btn-primary">Finalizar</button>
                                 </div>
                             </div>
+                            
                         </form>
                     
                 </div>

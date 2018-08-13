@@ -6,7 +6,7 @@
 
 -   Dominio:    http://turiro.com
 -   Correo:     soporte@turiro.com
--   repositorio https://github.com/percy2017/turiro.git
+-   repositorio https://github.com/percy2017/webpc55.git
 ## Instalación
 -   <h2>Servidor Local</h2>Para realizar la instalacion local la applicacion necesita estos requerimientos.
     -   PHP ^7.1.3
@@ -66,4 +66,4 @@
     </code>
 
 ## Creditos
-    LoginWeb - Diseño y Desarrollo de Software.
+    LoginWeb - Diseño y Desarrollo de Hardware & Software.

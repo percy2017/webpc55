@@ -1,3 +1,4 @@
+
 @extends('voyager::master')
 
 @section('css')
@@ -6,11 +7,11 @@
 
 @if($permits)
     @section('page_header')
-    <div class="container-fluid">
+    <!-- <div class="container-fluid">
         <h1 class="page-title">
             <i class="voyager-pen"></i> Nuevo Pedido
         </h1>
-    </div>
+    </div> -->
     @endsection
 
     @section('content')
@@ -21,81 +22,90 @@
             <div class="col-md-12">
                 <div class="panel panel-bordered">
                     <div class="panel-body">
-                        <form action="{{ route('pedidos.storage') }}" method="post">
-                            {{ csrf_field() }}
-                            <!-- <div class="col-xs-12 col-md-6"> -->
-                                <div class="form-group col-md-4">
-                                    <label for="">Proyectos</label>
-                                    <select name="proyecto_id" id="" class="form-control select2">
-                                        @foreach($proyectos as $item)
-                                            <option value="{{ $item->id }}">{{ $item->nombre }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                               
-                                <div class="form-group col-md-4">
-                                    <label for="">Proveedores</label>
-                                    <select name="proveedor_id" id="" class="form-control select2">
-                                        @foreach($proveedores as $item)
-                                            <option value="{{ $item->id }}">{{ $item->nombre }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="form-group col-md-4">
-                                    <label for="">Tipo de pedido</label>
-                                    <select name="tipo_id" id="" class="form-control select2">
-                                        @foreach($tipos as $item)
-                                            <option value="{{ $item->id }}">{{ $item->nombre }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <!-- <div class="form-group col-md-4">
-                                    <label for="">Metodo de Pago</label>
-                                        <select name="pago_id" id="" class="form-control select2">
-                                            @foreach($pagos as $item)
+                        <div class="col-xs-12" align="center">
+                            
+                            <font color="{{ config('voyager.primary_color') }}"><h3>Nuevo Pedido</h3></font>
+                        </div>
+                        <div class="col-xs-12"><hr></div>
+                        <div class="col-xs-12">
+                            <form action="{{ route('pedidos.storage') }}" method="post">
+                                {{ csrf_field() }}
+                                <!-- <div class="col-xs-12 col-md-6"> -->
+                                    <div class="form-group col-md-4">
+                                        <a>Proyectos</a>
+                                        <select name="proyecto_id" id="" class="form-control select2">
+                                            @foreach($proyectos as $item)
                                                 <option value="{{ $item->id }}">{{ $item->nombre }}</option>
                                             @endforeach
-                                    </select>
-                                </div> -->
-
-                                <div class="form-group col-md-6">
-                                    <label for="">Observaciones</label>
-                                    <textarea name="observacion" id="" rows="3" class="form-control">{{ setting('admin.pedidos_observacion_default') }}</textarea>
-                                </div>
-
-                            <!-- </div> -->
-                            <!-- <div class="col-xs-12 col-md-6"> -->
+                                        </select>
+                                    </div>
                                 
+                                    <div class="form-group col-md-4">
+                                        <a>Proveedores</a>
+                                        <a href="{{ route('voyager.proveedores.create') }}"> - Nuevo</a>
+                                        <select name="proveedor_id" id="" class="form-control select2">
+                                            @foreach($proveedores as $item)
+                                                <option value="{{ $item->id }}">{{ $item->nombre }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
 
-                                
-                                <div class="form-group col-md-6">
-                                    <label for="">Referencia</label>
-                                    <textarea name="referencia" id="" rows="3" class="form-control">{{ setting('admin.pedidos_referencia_default') }}</textarea>
+                                    <div class="form-group col-md-4">
+                                        <a>Tipo de pedido</a>
+                                        <select name="tipo_id" id="" class="form-control select2">
+                                            @foreach($tipos as $item)
+                                                <option value="{{ $item->id }}">{{ $item->nombre }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <!-- <div class="form-group col-md-4">
+                                        <label for="">Metodo de Pago</label>
+                                            <select name="pago_id" id="" class="form-control select2">
+                                                @foreach($pagos as $item)
+                                                    <option value="{{ $item->id }}">{{ $item->nombre }}</option>
+                                                @endforeach
+                                        </select>
+                                    </div> -->
+
+                                    <div class="form-group col-md-6">
+                                        <a>Observaciones</a>
+                                        <textarea name="observacion" id="" rows="3" class="form-control">{{ setting('admin.pedidos_observacion_default') }}</textarea>
+                                    </div>
+
+                                <!-- </div> -->
+                                <!-- <div class="col-xs-12 col-md-6"> -->
+                                    
+
+                                    
+                                    <div class="form-group col-md-6">
+                                        <a>Referencia</a>
+                                        <textarea name="referencia" id="" rows="3" class="form-control">{{ setting('admin.pedidos_referencia_default') }}</textarea>
+                                    </div>
+
+                                <!-- </div> -->
+                                <div class="col-xs-12">
+                                    <hr>
                                 </div>
-
-                            <!-- </div> -->
-                            <div class="col-xs-12">
-                                <hr>
-                            </div>
-                            <div class="col-xs-12">
-                                <button type="button" onclick="items_index('{{ route('items.index') }}')"  class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                                    Agregar items
-                                </button>
-                                <button type="button" onclick="detalle_pedido_trash('{{ route('detalle_pedido.trash') }}')"  class="btn btn-warning">
-                                    Vaciar
-                                </button>
-                                <div id="detalle_pedido_index"></div>
-                            </div>
-                            <div class="col-xs-12">
-                                <hr>
-                            </div> 
-                            <div align="right">     
-                                <input type="checkbox" name="aprobacion"> Enviar para Aprobación          
-                                <button type="submit" class="btn btn-primary">Guardar</button>
-                            </div>
-                        </form>
+                                <div class="col-xs-12">
+                                    <button type="button" onclick="items_index('{{ route('items.index') }}')"  class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                                        Agregar items
+                                    </button>
+                                    <button type="button" onclick="detalle_pedido_trash('{{ route('detalle_pedido.trash') }}')"  class="btn btn-warning">
+                                        Vaciar
+                                    </button>
+                                    <div id="detalle_pedido_index"></div>
+                                </div>
+                                <div class="col-xs-12">
+                                    <hr>
+                                </div> 
+                                <div align="right">     
+                                    <input type="checkbox" name="aprobacion"> Enviar para Aprobación          
+                                    <button type="submit" class="btn btn-primary">Guardar</button>
+                                </div>
+                            </form>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -107,18 +117,19 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title" id="exampleModalLabel">Items</h3>
-                    <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <!-- <h3 class="modal-title" id="exampleModalLabel">Items</h3> -->
+                    <font color="{{ config('voyager.primary_color') }}">Items</font>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
-                    </button> -->
+                    </button>
                 </div>
                 <div class="modal-body">
                     <div id="items_ajax"></div>
-                <div class="modal-footer">
+                <!-- <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                     
-                    <!-- <button type="button" onclick="items_index('{{ route('items.index') }}')" class="btn btn-primary">Lista</button> -->
-                </div>
+                    <button type="button" onclick="items_index('{{ route('items.index') }}')" class="btn btn-primary">Lista</button>
+                </div> -->
             </div>
         </div>
     </div>
@@ -264,12 +275,12 @@
                     valor = document.getElementById("precio-"+item_id).value;
                     break;
                 case 'maquinaria_id':
-                    valor = document.getElementById("maquinaria_id").value;
+                    valor = document.getElementById("maquinaria_id-"+item_id).value;
                     break;
                 default:
                     break;
             }
-            //alert(valor);
+                //alert(valor);
             if(valor)
             {
                 //alert(urli);    
@@ -279,7 +290,7 @@
                     url: urli,
                     type: 'get',
                     success: function(result) {
-                        //detalle_pedido_index();
+                        detalle_pedido_index();
                     }
                 });
             }

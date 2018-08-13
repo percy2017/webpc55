@@ -1,3 +1,4 @@
+
 @extends('voyager::master')
 
 @section('css')
@@ -6,12 +7,12 @@
 
 @if($permits)
     @section('page_header')
-    <div class="container-fluid">
+    <!-- <div class="container-fluid">
         <h1 class="page-title">
             <i class="voyager-pen"></i> Editar Pedido
         </h1>
         
-    </div>
+    </div> -->
     @endsection
 
     @section('content')
@@ -22,87 +23,94 @@
             <div class="col-md-12">
                 <div class="panel panel-bordered">
                     <div class="panel-body">
-                        <fieldset @if($pedido->estado_id <> 1 and $pedido->estado_id <> 3) disabled @endif>
-                            <form action="{{ route('pedidos.update') }}" method="post">
-                                {{ csrf_field() }}
-                                    <input type="text" name="pedido_id" value="{{ $pedido->id }}" hidden>
-                                    <div class="form-group col-md-4">
-                                        <label for="">Proyectos</label>
-                                        <select name="proyecto_id" id="" class="form-control select2">
-                                            @foreach($proyectos as $item)
-                                                @if($item->id == $pedido->proyecto_id)
-                                                    <option value="{{ $item->id }}" selected>{{ $item->nombre }}</option>
-                                                @else
-                                                    <option value="{{ $item->id }}">{{ $item->nombre }}</option>
-                                                @endif                                                
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                
-                                    <div class="form-group col-md-4">
-                                        <label for="">Proveedores</label>
-                                        <select name="proveedor_id" id="" class="form-control select2">
-                                            @foreach($proveedores as $item)
-                                                @if($item->id == $pedido->proveedor_id)
-                                                    <option value="{{ $item->id }}" selected>{{ $item->nombre }}</option>
-                                                @else
-                                                    <option value="{{ $item->id }}">{{ $item->nombre }}</option>
-                                                @endif
-                                                
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group col-md-4">
-                                        <label for="">Tipo de pedido</label>
-                                        <select name="tipo_id" id="" class="form-control select2">
-                                            @foreach($tipos as $item)
-                                                @if($item->id == $pedido->proveedor_id)
-                                                    <option value="{{ $item->id }}" selected>{{ $item->nombre }}</option>
-                                                @else
-                                                    <option value="{{ $item->id }}">{{ $item->nombre }}</option>
-                                                @endif
-                                            @endforeach
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group col-md-6">
-                                        <label for="">Referencia</label>
-                                        <textarea name="referencia" id="" rows="3" class="form-control">{{ $pedido->referencia }}</textarea>
-                                    </div>
-                                
-                                    <div class="form-group col-md-6">
-                                        <label for="">Observaciones</label>
-                                        <textarea name="observacion" id="" rows="3" class="form-control">{{ $pedido->observacion }}</textarea>
-                                    </div>
-                                    @if($pedido->estado_id === 3)
-                                        <div class="form-group col-md-12">
-                                            <label for="" class="label label-danger">Motivo del Rechazo</label>
-                                            <textarea name="motivo" id="" rows="3" class="form-control">{{ $rechazo->motivo }}</textarea>
+                        <div class="col-xs-12" align="center">
+                            <h3>Pedido #{{ $pedido->id }}</h3>
+                        </div>
+                        <div class="col-xs-12"><hr></div>
+                        <div class="col-xs-12">
+                            <fieldset @if($pedido->estado_id <> 1 and $pedido->estado_id <> 3) disabled @endif>
+                                <form action="{{ route('pedidos.update') }}" method="post">
+                                    {{ csrf_field() }}
+                                        <input type="text" name="pedido_id" value="{{ $pedido->id }}" hidden>
+                                        <div class="form-group col-md-4">
+                                            <a>Proyectos</a>
+                                            <select name="proyecto_id" id="" class="form-control select2">
+                                                @foreach($proyectos as $item)
+                                                    @if($item->id == $pedido->proyecto_id)
+                                                        <option value="{{ $item->id }}" selected>{{ $item->nombre }}</option>
+                                                    @else
+                                                        <option value="{{ $item->id }}">{{ $item->nombre }}</option>
+                                                    @endif                                                
+                                                @endforeach
+                                            </select>
                                         </div>
-                                    @endif
-                              
-                                <div class="col-xs-12">
-                                    <hr>
-                                </div>
-                                <div class="col-xs-12">
-                                    <button type="button" onclick="items_index('{{ route('items.index') }}')"  class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                                        Agrega items
-                                    </button>
-                                    <button type="button" onclick="detalle_pedido_trash('{{ route('detalle_pedido.trash') }}')"  class="btn btn-warning">
-                                        Vaciar
-                                    </button>
-                                    <div id="detalle_pedido_index"></div>
-                                </div>
-                                <div class="col-xs-12">
-                                    <hr>
-                                </div>
-                                <div align="right">                            
-                                    <button type="submit" class="btn btn-primary">Enviar</button>
-                                </div>
-                              
-                            </form>
-                        </fieldset>
+                                    
+                                        <div class="form-group col-md-4">
+                                            <a>Proveedores</a>
+                                            <select name="proveedor_id" id="" class="form-control select2">
+                                                @foreach($proveedores as $item)
+                                                    @if($item->id == $pedido->proveedor_id)
+                                                        <option value="{{ $item->id }}" selected>{{ $item->nombre }}</option>
+                                                    @else
+                                                        <option value="{{ $item->id }}">{{ $item->nombre }}</option>
+                                                    @endif
+                                                    
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group col-md-4">
+                                            <a>Tipo de pedido</a>
+                                            <select name="tipo_id" id="" class="form-control select2">
+                                                @foreach($tipos as $item)
+                                                    @if($item->id == $pedido->proveedor_id)
+                                                        <option value="{{ $item->id }}" selected>{{ $item->nombre }}</option>
+                                                    @else
+                                                        <option value="{{ $item->id }}">{{ $item->nombre }}</option>
+                                                    @endif
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group col-md-6">
+                                            <a>Referencia<a>
+                                            <textarea name="referencia" id="" rows="3" class="form-control">{{ $pedido->referencia }}</textarea>
+                                        </div>
+                                    
+                                        <div class="form-group col-md-6">
+                                            <a>Observaciones</a>
+                                            <textarea name="observacion" id="" rows="3" class="form-control">{{ $pedido->observacion }}</textarea>
+                                        </div>
+                                        @if($pedido->estado_id === 3)
+                                            <div class="form-group col-md-12">
+                                                <label for="" class="label label-danger">Motivo del Rechazo</label>
+                                                <textarea name="motivo" id="" rows="3" class="form-control">{{ $rechazo->motivo }}</textarea>
+                                            </div>
+                                        @endif
+                                
+                                    <div class="col-xs-12">
+                                        <hr>
+                                    </div>
+                                    <div class="col-xs-12">
+                                        <button type="button" onclick="items_index('{{ route('items.index') }}')"  class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                                            Agrega items
+                                        </button>
+                                        <button type="button" onclick="detalle_pedido_trash('{{ route('detalle_pedido.trash') }}')"  class="btn btn-warning">
+                                            Vaciar
+                                        </button>
+                                        <div id="detalle_pedido_index"></div>
+                                    </div>
+                                    <div class="col-xs-12">
+                                        <hr>
+                                    </div>
+                                    <div align="right">                            
+                                        <button type="submit" class="btn btn-primary">Enviar</button>
+                                    </div>
+                                
+                                </form>
+                            </fieldset>
+                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -113,18 +121,18 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title" id="exampleModalLabel">Items</h3>
-                    <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <font color="{{ config('voyager.primary_color') }}">Items</font>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
-                    </button> -->
+                    </button>
                 </div>
                 <div class="modal-body">
                     <div id="items_ajax"></div>
-                <div class="modal-footer">
+                <!-- <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                     
-                    <!-- <button type="button" onclick="items_index('{{ route('items.index') }}')" class="btn btn-primary">Lista</button> -->
-                </div>
+                    <button type="button" onclick="items_index('{{ route('items.index') }}')" class="btn btn-primary">Lista</button>
+                </div> -->
             </div>
         </div>
     </div>
@@ -269,7 +277,7 @@
                   valor = document.getElementById("precio-"+item_id).value;
                   break;
                 case 'maquinaria_id':
-                  valor = document.getElementById("maquinaria_id").value;
+                    valor = document.getElementById("maquinaria_id-"+item_id).value;
                   break;
               default:
                   break;
@@ -279,11 +287,12 @@
           {
               urli = urli.replace('valor',valor);
               //alert(urli);
+              console.log(urli);
               $.ajax({
                   url: urli,
                   type: 'get',
                   success: function(result) {
-                      //detalle_pedido_index();
+                      detalle_pedido_index();
                   }
               });
           }

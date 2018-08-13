@@ -4,24 +4,26 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <th scope="col">#</th>
+                <!-- <th scope="col">#</th> -->
+                <th>elegir</th>
                 <th>nombre</th>
                 <th>descripcion</th>
                 <th>categoria</th>
                 <th>unidad</th>
-                <th>accion</th>
+                
             </tr>
         </thead>
         <tbody>
             @if(count($items) > 0)
                 @foreach($items as $item)
                     <tr>
-                        <td>{{ $item->id }}</td>
-                        <td>{{ $item->nombre }}</td>
-                        <td>{{ $item->descripcion }}</td>
-                        <td>{{ $item->categoria }}</td>
-                        <td>{{ $item->unidad }}</td>
-                        <td><button onclick="detalle_pedido_storage('{{ route('detalle_pedido.storage',$item->id) }}')" class="btn btn-primary"><i class="voyager-forward"></i></button></td>
+                        <!-- <td><a>{{ $item->id }}</a></td> -->
+                        <td><button onclick="detalle_pedido_storage('{{ route('detalle_pedido.storage',$item->id) }}')" class="btn btn-success"><i class="voyager-forward"></i></button></td>
+                        <td><font color="{{ config('voyager.primary_color') }}">{{ $item->nombre }}</font></td>
+                        <td><font color="{{ config('voyager.primary_color') }}">{{ $item->descripcion }}</font></td>
+                        <td><font color="{{ config('voyager.primary_color') }}">{{ $item->categoria }}</font></td>
+                        <td><font color="{{ config('voyager.primary_color') }}">{{ $item->unidad }}</font></td>
+                        
                     </tr>
                 @endforeach
             @else
@@ -37,5 +39,7 @@
     </div>
     <div align="center">
         {{ $items->links() }}
+        <br>
+        <small>Total :{{ $items->total() }}</small>
     </div>
 </div>

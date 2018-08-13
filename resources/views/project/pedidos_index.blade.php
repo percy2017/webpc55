@@ -6,12 +6,6 @@
 
 @if($permits)
     @section('page_header')
-    <div class="container-fluid">
-        <h1 class="page-title">
-            <i class="voyager-pen"></i> Mis Pedidos
-        </h1>
-        <a href="{{ route('pedidos.create') }}" class="btn btn-primary">Nuevo</a>
-    </div>
     @endsection
 
     @section('content')
@@ -20,9 +14,19 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="panel panel-bordered">
+                    
                     <div class="panel-body">
-                    <input type="search"  id="criterio" onkeypress="return pedidos_search(event)"  class="form-control" placeholder="escribe el criterio.." value="{{ $criterio }}">
-                    <br>
+                    <div class="col-xs-6">
+                        <font color="{{ config('voyager.primary_color') }}"><h3>Mis Medidos</h3></font>
+                    </div>
+                    <div class="col-xs-6" align="right">
+                        <a href="{{ route('pedidos.create') }}" class="btn btn-primary">Nuevo</a>
+                    </div>
+                    
+                    <div class="col-xs-12"><hr></div>
+                    <!-- <input type="search"  id="criterio" onkeypress="return pedidos_search(event)"  class="form-control" placeholder="escribe el criterio.." value="{{ $criterio }}">
+                    <br> -->
+                    <div class="col-xs-12">
                         <div class="table-responsive">
                             <table id="dataTable" class="table table-hover">
                                 <thead>
@@ -30,8 +34,8 @@
                                         <th>#</th>
                                         <th>estado</th>
                                         <th>proyecto</th>
-                                        <th>tipo</th>
-                                        <th>proveedor</th>
+                                        <!-- <th>tipo</th>
+                                        <th>proveedor</th> -->
                                         <th>creado</th>
                                         <th>monto</th>
                                     </tr>
@@ -42,8 +46,8 @@
                                             <td><a href="#">{{ $item->id }}</a></td>
                                             <td><a href="#"><label for="" class="{{ $item->color }}">{{ $item->estado }}</label></a></td>
                                             <td><a href="#">{{ $item->proyecto }}</a></td>
-                                            <td><a href="#">{{ $item->tipo }}</a></td>
-                                            <td><a href="#">{{ $item->proveedor }}</a></td>
+                                            <!-- <td><a href="#">{{ $item->tipo }}</a></td>
+                                            <td><a href="#">{{ $item->proveedor }}</a></td> -->
                                             <td><a href="#">{{ $item->created_at }}</a><br><small>{{  \Carbon\Carbon::parse($item->created_at)->diffForHumans() }}</small></td>
                                             <td><a href="#">{{ number_format($item->total, 2, ',', ' ') }}</a></td>
                                         </tr>
@@ -52,8 +56,12 @@
                             </table>
                             <div align="center">
                                 {{ $pedidos->links() }}
+                                <br>
+                                <small>Total :{{ $pedidos->total() }}</small>
                             </div>
                         </div>
+                    </div>
+                        
                     </div>
                 </div>
             </div>

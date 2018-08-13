@@ -41,7 +41,7 @@ URI     : https://colorlib.com
                 <div class="col-md-12">
                     <nav class="navbar navbar-dark navbar-expand-lg">
                         <!-- <a class="navbar-brand" href="index.html"><img src="images/logo.png" class="img-fluid" alt="logo"></a> <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button> -->
-                        <a href="{{ URL('/admin') }}" class="btn btn-outline-light my-3 my-sm-0 ml-lg-3">LoginWeb</a>
+                        <a href="{{ URL('/admin/profile') }}" class="btn btn-outline-light my-3 my-sm-0 ml-lg-3">LoginWeb</a>
                         <div class="collapse navbar-collapse" id="navbar">
                             <ul class="navbar-nav ml-auto">
                                 <li class="nav-item"> <a class="nav-link active" href="#home">INICIO <span class="sr-only">(current)</span></a> </li>
@@ -66,7 +66,7 @@ URI     : https://colorlib.com
         </div>
         <!-- <div class="img-holder mt-3"><img src="images/iphonex.png" alt="phone" class="img-fluid"></div> -->
         <div class="container mt-2">
-            <small>LINK</small>
+            
             <h2><a href="#">{{ setting('site.link') }}</a></h2>
             <!-- <p class="tagline">{{ setting('site.description') }}</p> -->
         </div>
@@ -354,7 +354,9 @@ URI     : https://colorlib.com
                 <img src="images/screen1.jpg" alt="image">
                 <img src="images/screen2.jpg" alt="image">
                 <img src="images/screen3.jpg" alt="image">
-                <img src="images/screen1.jpg" alt="image">
+                <img src="images/screen4.jpg" alt="image">
+                <img src="images/screen5.jpg" alt="image">
+                <img src="images/screen6.jpg" alt="image">
             </div>
 
         </div>

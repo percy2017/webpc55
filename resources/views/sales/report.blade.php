@@ -2,16 +2,16 @@
 
 @section('css')
 @endsection
-<?php $permits = Voyager::can('report_project'); ?>
+<?php $permits = Voyager::can('report_sales'); ?>
 
 @if($permits)
     @section('page_header')
-    <!-- <div class="container-fluid">
+    <div class="container-fluid">
         <h1 class="page-title">
             <i class="voyager-pen"></i> Consultas
         </h1>
         
-    </div> -->
+    </div>
     @endsection
 
     @section('content')
@@ -21,12 +21,8 @@
             <div class="col-md-12">
                 <div class="panel panel-bordered">
                     <div class="panel-body">
-                       <div class="col-xs-12" align="center">
-                            
-                            <font color="{{ config('voyager.primary_color') }}"><h3>Consultas</h3></font>
-                       </div>
-                       <div class="col-xs-12"><hr></div>
-                        <div class="col-xs-12 col-md-3">
+                       
+                        <div class="col-xs-3">
                             <div class="form-group">
                                 <a>Tabla</a>
                                 <select name="table" id="table" class="form-control">
@@ -38,7 +34,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-md-9">
+                        <div class="col-xs-9">
                             <div class="form-group">
                                 <a>Consulta</a>
                                 <select name="table_option" id="table_option" class="form-control">
