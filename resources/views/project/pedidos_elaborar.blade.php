@@ -23,7 +23,7 @@
                     <div class="panel-body">
                         <div class="col-xs-12" align="center">
                             <!-- <h3>Pedido para elaboracion</h3> -->
-                            <font color="{{ config('voyager.primary_color') }}"><h3>Pedido para Elaboración</h3></font>
+                            <font color="{{ config('voyager.primary_color') }}"><h3>Elaborar Pedido # {{ $pedido->id }}</h3></font>
                         </div>
                         <div class="col-xs-12"><hr></div>
                         <form action="{{ route('pedidos.final') }}" method="POST">
@@ -41,7 +41,7 @@
                             <div class="form-group col-md-6">
                                 
                                 <font color="{{ config('voyager.primary_color') }}">Datos del Pago</font>
-                                <textarea name="datos" id="" rows="3" class="form-control">{{ setting('admin.pedidos_datos_default') }}</textarea>
+                                <textarea name="datos" id="" rows="3" class="form-control" required>{{ setting('admin.pedidos_datos_default') }}</textarea>
                             </div>
                                 
                             <div class="col-xs-12">
@@ -51,31 +51,41 @@
                                                 <tr>
                                                     <!-- <th>id</th> -->
                                                     <th>nombre</th>
-                                                    <!-- <th>descripcion</th> -->
+                                                    <th>descripcion</th>
                                                     <th>cantidad</th>
                                                     <th>precio</th>
                                                     <th>SubTotal</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                <?php $total=0; ?>
                                                 @foreach($detalle_pedido as $item)
                                                     <tr>
                                                         <!-- <td>{{ $item->id }}</td> -->
                                                         <td><font color="{{ config('voyager.primary_color') }}">{{ $item->nombre }}</font></td>
-                                                        <!-- <td>{{ $item->descripcion }}</td> -->
+                                                        <td><font color="{{ config('voyager.primary_color') }}">{{ $item->descripcion }}</font></td>
                                                         <td><font color="{{ config('voyager.primary_color') }}">{{ $item->cantidad }}</font></td>
                                                         <td><font color="{{ config('voyager.primary_color') }}">{{ $item->precio }}</font></td> 
                                                         <td><font color="{{ config('voyager.primary_color') }}">{{ number_format($item->precio * $item->cantidad, 2, ',', ' ') }}</font></td> 
+                                                        <?php $total = $total + ($item->cantidad * $item->precio); ?>
                                                     </tr>
                                                 @endforeach
-                                        
+                                                <tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    
+                                                    
+                                                    <td><a>Total:</a></td>
+                                                    <td><a>{{ number_format($total, 2, ',', ' ') }}</a></td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
                                 <div class="col-xs-12"><hr></div>
                                 <div align="right">
-                                    <button type="submit" class="btn btn-primary">Finalizar</button>
+                                    <button type="submit" class="btn btn-primary">Enviar a contabilizar</button>
                                 </div>
                             </div>
                             

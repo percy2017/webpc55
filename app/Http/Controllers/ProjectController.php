@@ -124,13 +124,21 @@ class ProjectController extends Controller
     {
         $proyectos = DB::table('proyectos')
                     ->where('estado',true)
+                    ->orderBy('created_at','desc')
                     ->get();
                     
-        $tipos = DB::table('tipos')->get();
+        $tipos = DB::table('tipos')
+                ->orderBy('created_at','desc')
+                ->get();
+
         $proveedores = DB::table('proveedores')
                     ->where('estado',true)
+                    ->orderBy('created_at','desc')
                     ->get();
-        $pagos = DB::table('pagos')->get();
+
+        $pagos = DB::table('pagos')
+                ->orderBy('created_at','desc')
+                ->get();
 
         $this->detalle_pedido_trash();
 
@@ -340,10 +348,10 @@ class ProjectController extends Controller
         // return $datos;
         DB::table('pedidos')
             ->where('id', $datos->pedido_id)
-            ->update(['estado_id' => 5, 'pago_id' => $datos->pago_id, 'datos' => $datos->datos]);
+            ->update(['estado_id' => 6, 'pago_id' => $datos->pago_id, 'datos' => $datos->datos]);
+            $this->pedidos_estado($datos->pedido_id, 6);
 
-
-        return redirect()->route('pedidos.cola')->with(['message' => 'Pedido finalizado corretamente..!', 'alert-type' => 'info']);  
+        return redirect()->route('pedidos.cola')->with(['message' => 'Pedido registrado y enviado para contabilizar..!', 'alert-type' => 'info']);  
         //return redirect()->back();
     }
     public function pedidos_rechazo(Request $datos)
@@ -412,7 +420,58 @@ class ProjectController extends Controller
 
     }
 
+    public function pedidos_contabilizar()
+    {
+        $pedidos = DB::table('pedidos')
+                    ->join('users', 'users.id', 'pedidos.user_id')                    
+                    ->join('proyectos', 'proyectos.id', 'pedidos.proyecto_id')
+                    ->join('proveedores', 'proveedores.id', 'pedidos.proveedor_id')
+                    ->join('tipos', 'tipos.id', 'pedidos.tipo_id')
+                    ->select('pedidos.*','users.name','proyectos.nombre as proyecto', 'tipos.nombre as tipo')
+                    ->where('pedidos.estado_id',6)   
+                    ->orderBy('pedidos.created_at','desc')
+                    ->get();
+
+        return view('project.pedidos_contabilidad', compact('pedidos'));
+    }
+    public function pedidos_contabilizar_detalle($pedido_id)
+    {
+        $dp = DB::table('detalle_pedidos')
+                ->join('pedidos', 'pedidos.id', 'detalle_pedidos.pedido_id')
+                ->join('users', 'users.id', 'pedidos.user_id')
+                ->join('items', 'items.id', 'detalle_pedidos.item_id')
+                ->join('maquinarias', 'maquinarias.id', 'detalle_pedidos.maquinaria_id')
+                ->select('items.*', 'detalle_pedidos.cantidad', 'detalle_pedidos.precio','maquinarias.codigo as maquinaria')
+                ->where('detalle_pedidos.pedido_id', $pedido_id)
+                ->get();
+        //return $dp;
+        
+        return view('project.pedidos_conta_detalle', compact('dp', 'maquinarias'));
+    }
+
+    public function pedidos_archivar($pedido_id)
+    {
+        $this->pedidos_estado($pedido_id, 5);
+        return redirect()->route('pedidos.conta')->with(['message' => 'Pedido archivado correctamente..!', 'alert-type' => 'info']);
+    }
     
+    public function pedidos_proveedor_create()
+    {
+        return view('project.pedidos_proveedor_create');
+    }
+    public function pedidos_proveedor_storage(Request $datos)
+    {
+        DB::table('proveedores')->insert([
+            'nombre' => $datos->nombre,
+            'direccion' => $datos->direccion,
+            'telefono' => $datos->telefono,
+            'celular' => $datos->celular,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
+
+        ]);
+        return redirect()->route('pedidos.create')->with(['message' => 'Provedor agreado correctamente..', 'alert-type' => 'info']);
+    }
     //Items--------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
     public function items_index()

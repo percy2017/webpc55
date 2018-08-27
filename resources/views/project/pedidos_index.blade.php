@@ -17,7 +17,7 @@
                     
                     <div class="panel-body">
                     <div class="col-xs-6">
-                        <font color="{{ config('voyager.primary_color') }}"><h3>Mis Medidos</h3></font>
+                        <font color="{{ config('voyager.primary_color') }}"><h3>Mis Pedidos</h3></font>
                     </div>
                     <div class="col-xs-6" align="right">
                         <a href="{{ route('pedidos.create') }}" class="btn btn-primary">Nuevo</a>

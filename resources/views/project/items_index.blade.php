@@ -1,4 +1,4 @@
-<input type="search"  id="criterio" onkeypress="return items_search(event)"  class="form-control" placeholder="escribe el criterio.." value="{{ $criterio }}">
+<input type="search" id="criterio" onkeypress="return items_search(event)"  class="form-control" placeholder="escribe el criterio.." value="{{ $criterio }}">
 <br>
 <div class="table-responsive">
     <table class="table table-hover">

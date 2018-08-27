@@ -29,24 +29,17 @@
                         <div class="col-xs-12">
                             <fieldset @if($estado) disabled @endif>
                                 <div class="col-xs-12 col-md-6">
-                                    <h4 align="center"><a>Venta</a></h4>
-                                    <form action="{{ route('ventas.storage') }}" method="post">  
-                                        {{ csrf_field() }}
-                                        <input type="text" name="solicitud_id" value="{{ $solicitud->id }}" hidden>
-                                        <div class="form-group">
-                                            <a>Detalle</a>
-                                            <textarea name="descripcion" id="" rows="3" class="form-control"></textarea>
-                                        </div>
-                                        <div align="right">
-                                            <button class="btn btn-primary" type="submit">Enviar</button>
-                                        </div>
-                                    </form>
-                                    
+                                    <h4 align="center"><a>Envios</a></h4>
+                                    <div id="envios_ajax"></div>
+
                                 </div>
                                 <div class="col-xs-12 col-md-6">
                                     <h4 align="center"><a>Mapa</a></h4>
                                     <div id="map" style="height: 300px;"></div>
-                                    
+                                    <div class="form-group">
+                                        <label for="">Direccion</label>
+                                        <input type="text" name="" id="" class="form-control" value="{{ $solicitud->direccion_entrega }}" readonly>
+                                    </div>
                                 </div>
                                 <div class="col-xs-12"><hr></div>
                                 <div class="col-xs-12">
@@ -60,7 +53,7 @@
                                                     <th>cantidad</th>
                                                     <th>precio</th>
                                                     <th>subtotal</th>
-                                                    <th>Eliminar</th>
+                                                    
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -75,7 +68,7 @@
                                                         <td><a>{{ $item->precio }}</a></td>
                                                         
                                                         <td><a>{{ number_format(($item->cantidad * $item->precio), 2, ',', ' ') }}</a></td>
-                                                        <td><a onclick="detalle_solicitud_delete('{{ route('ds.delete', $item->id) }}')" class="btn btn-danger"><i class="voyager-trash"></i></a></td>
+                                                        
                                                         <?php $total = $total + ($item->cantidad * $item->precio); ?>
                                                     </tr>
                                                 @endforeach    
@@ -88,9 +81,23 @@
                                                         <td><a>{{ number_format($total, 2, ',', ' ') }}</a></td>
                                                     </tr>   
                                             </tbody>
-                                        </table>
-                                        
+                                        </table>                                        
                                     </div>
+                                </div>
+                                <div class="col-xs-12"><hr></div>
+                                <div class="col-xs-12">
+                                    
+                                    <form action="{{ route('ventas.storage') }}" method="post">  
+                                        {{ csrf_field() }}
+                                        <input type="text" name="solicitud_id" value="{{ $solicitud->id }}" hidden>
+                                        <div class="form-group">
+                                            <a>Detalle de la Venta</a>
+                                            <textarea name="descripcion" id="" rows="3" class="form-control" required></textarea>
+                                        </div>
+                                        <div align="right">
+                                            <button class="btn btn-primary" type="submit">Finalizar Venta</button>
+                                        </div>
+                                    </form>
                                 </div>
                             </fieldset>
                         </div>
@@ -116,6 +123,65 @@
 
 @section('javascript')
     <script>
+
+        $(document).ready(function(){
+            envios_index();
+        });
+
+        //envios--------------------------------------------------------
+        //-------------------------------------------------------------
+        function envios_index()
+        {
+            $.ajax({
+                url: '{{ route('solicitud.envios.index', $solicitud->id) }}',
+                beforesend: function()
+                {
+                    $('#envios_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
+                },
+                success: function(result) {
+                    //$( "#weather-temp" ).html( "<strong>" + result + "</strong> degrees" );
+                    $('#envios_ajax').empty().html(result);
+                }
+            });
+        }
+        function envios_create()
+        {
+           
+           $.ajax({
+                url: '{{ route('solicitud.envios.create', $solicitud->id) }}',
+                beforesend: function()
+                {
+                    $('#envios_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
+                },
+                success: function(result) {
+                    $('#envios_ajax').empty().html(result);                    
+                }
+            });
+        }
+     
+        function envios_storage()
+        {
+           
+           $.ajax({
+                url: '{{ route('solicitud.envios.storage') }}',
+                type: 'post',
+                data: $('#envios-form').serialize(),
+                
+                beforesend: function()
+                {
+                    $('#envios_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
+                },
+                success: function(data) { 
+                                     
+                    envios_index();                    
+                }
+            });
+        }
+
+        
+
+        //mapa--------------------------------------------------------
+        //-------------------------------------------------------------
         var map;
         function initMap() {
             //var geo_options = {enableHighAccuracy:true, maximumAge:30000, timeout:27000};

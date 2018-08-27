@@ -25,7 +25,8 @@
                             <div class="col-xs-12 col-md-6">
                                 <h4 align="center"><a> Datos de la Solicitud</a></h4>                             
                                 <div class="form-group">
-                                    <a>Cliente </a> - <a href="{{ route('voyager.clientes.create') }}"> Nuevo</a>
+                                    <!-- <a>Cliente </a> - <a href="{{ route('voyager.clientes.create') }}"> Nuevo</a> -->
+                                    <a href="#" id="solicitud_cliente_create" data-toggle="modal" data-target="#materiales_modal"> Cliente <i class="voyager-paper-plane"></i></a>
                                     <select name="cliente_id" id="cliente_id" class="form-control select2">
                                         @foreach($clientes as $item)
                                             <option value="{{ $item->id }}">{{ $item->nombre_completo }}</option>
@@ -78,13 +79,12 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3 class="modal-title" id="#">Materiales</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
                     <div id="materiales_ajax"></div>
-                <div class="modal-footer">
-                    <a href="{{ route('voyager.materiales.create') }}" class="btn btn-primary">Nuevo</a>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                 </div>
             </div>
         </div>
@@ -118,11 +118,37 @@
         {          
             $.ajax({
                 url: urli,
-                type: 'get',
+                beforesend: function()
+                {
+                    $('#materiales_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
+                },
                 success: function(result){
                     $('#materiales_ajax').empty().html(result);
                 } 
             });
+        }
+
+        function items_search(e)
+        {
+            if (e.keyCode == 13)
+            {
+                var criterio = document.getElementById('criterio').value; 
+                var urli = '{{ route('materiales.search', 'criterio') }}';
+                    urli = urli.replace('criterio', criterio);
+                    // alert(urli);
+                    $.ajax({
+                        url: urli,
+                        beforesend: function()
+                        {
+                            $('#materiales_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
+                        },
+                        success: function(result) {
+                            
+                            $('#materiales_ajax').empty().html(result);
+                        }
+                    });
+            }
+            
         }
         
         //detalle solicitud---------------------------------------------------------
@@ -226,10 +252,33 @@
             var url = $(this).attr("href");
             $.ajax({
                 url: url,
-                type: 'get',
+                beforesend: function()
+                {
+                    $('#materiales_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
+                },
                 success: function(result) {
                     //$( "#weather-temp" ).html( "<strong>" + result + "</strong> degrees" );
                     $('#materiales_ajax').empty().html(result);
+                }
+            });
+        });
+
+        //Cliente--------------------------------------------------------
+        //------------------------------------------------------------------
+
+        $( "#solicitud_cliente_create" ).click(function() {
+            
+            //alert('{{ route('solicitud.cliente.create') }}');
+
+            $.ajax({
+                url: '{{ route('solicitud.cliente.create') }}',
+                beforesend: function()
+                {
+                    $('#materiales_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
+                },
+                success: function(result) 
+                {
+                    $('#materiales_ajax').empty().html(result);   
                 }
             });
         });

@@ -34,6 +34,11 @@ Route::group(['prefix' => 'admin'], function () {
         Route::post('/project/pedidos/rechazo','ProjectController@pedidos_rechazo')->name('pedidos.rechazo');
         Route::post('/project/pedidos/update','ProjectController@pedidos_update')->name('pedidos.update');
         Route::get('/project/pedidos/search/{criterio}','ProjectController@pedidos_search')->name('pedidos.search');
+        Route::get('/project/pedidos/contabilizar','ProjectController@pedidos_contabilizar')->name('pedidos.conta');
+        Route::get('/project/pedidos/contabilizar/detalle/{pedido_id}','ProjectController@pedidos_contabilizar_detalle')->name('pedidos.conta.detalle');
+        Route::get('/project/pedidos/contabilizar/archivar/{pedido_id}','ProjectController@pedidos_archivar')->name('pedidos.archivar');
+        Route::get('/project/pedidos/proveedor/create','ProjectController@pedidos_proveedor_create')->name('pedidos.proveedor.create');
+        Route::post('/project/pedidos/proveedor/stotage','ProjectController@pedidos_proveedor_storage')->name('pedidos.proveedor.storage');
 
         Route::get('/project/items/index','ProjectController@items_index')->name('items.index');
         Route::get('/project/items/create/{criterip}','ProjectController@items_create')->name('items.create');
@@ -53,10 +58,16 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/sales/solicitudes/create','SalesController@solicitud_create')->name('solicitud.create');
         Route::get('/sales/solicitudes/edit/{id}','SalesController@solicitud_edit')->name('solicitud.edit');
         Route::post('/sales/solicitudes/storage','SalesController@solicitud_storage')->name('solicitud.storage');
+        Route::get('/sales/solicitudes/clientes/create','SalesController@solicitud_cliente_create')->name('solicitud.cliente.create');
+        Route::post('/sales/solicitudes/clientes/storage','SalesController@solicitud_cliente_storage')->name('solicitud.cliente.storage');
+        Route::get('/sales/solicitudes/envios/solicitud/{solicitud_id}','SalesController@solicitud_envios_index')->name('solicitud.envios.index');
+        Route::get('/sales/solicitudes/envios/create/{solicitud_id}','SalesController@solicitud_envios_create')->name('solicitud.envios.create');
+        Route::post('/sales/solicitudes/envios/storage','SalesController@solicitud_envios_storage')->name('solicitud.envios.storage');
 
         Route::post('/sales/ventas/storage','SalesController@ventas_storage')->name('ventas.storage');
 
         Route::get('/sales/materiales','SalesController@materiales_index')->name('materiales.index');
+        Route::get('/sales/materiales/search/{criterio}','SalesController@materiales_search')->name('materiales.search');
 
         Route::get('/sales/detalle_solictud/storage/{material_id}','SalesController@detalle_solicitud_storage')->name('ds.storage');
         Route::get('/sales/detalle_solictud','SalesController@detalle_solicitud_index')->name('ds.index');

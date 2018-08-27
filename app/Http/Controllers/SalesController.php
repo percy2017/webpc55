@@ -33,7 +33,31 @@ class SalesController extends Controller
                 'updated_at' => Carbon::now()
             ]);
             return redirect()->route('solicitud.index')->with(['message' => 'Venta realizado correctamente..', 'alert-type' => 'info']);
-            return $datos;
+            
+        }
+        public function solicitud_envios_index($solicitud_id)
+        {
+            $envios = DB::table('envios')
+                        ->join('solicitudes','solicitudes.id','envios.solicitud_id')
+                        ->select('envios.*','solicitudes.id')
+                        ->where('envios.solicitud_id',$solicitud_id)
+                        ->orderBy('envios.created_at','desc')
+                        ->get();
+            return view('sales.solicitud_envios_index',compact('envios'));
+        }
+        public function solicitud_envios_create($solicitud_id)
+        {
+            return view('sales.solicitud_envios_create', compact('solicitud_id'));
+        }
+        public function solicitud_envios_storage(Request $datos)
+        {
+            // return $datos->all();
+            DB::table('envios')->insert([
+                'detalle' => $datos->detalle,
+                'solicitud_id' => $datos->solicitud_id,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now()
+            ]);
         }
     //solicitudes--------------------------------------------------------------------
     //-------------------------------------------------------------------------------
@@ -50,7 +74,9 @@ class SalesController extends Controller
     }
     public function solicitud_create()
     {
-        $clientes = DB::table('clientes')->get();
+        $clientes = DB::table('clientes')
+                    ->orderBy('created_at','desc')    
+                    ->get();
         return view('sales.solicitud_create', compact('clientes'));
     }
     public function solicitud_edit($id)
@@ -58,6 +84,8 @@ class SalesController extends Controller
         $solicitud = DB::table('solicitudes')
                     ->where('id',$id)
                     ->first();
+
+        // $envios =DB::table('entrega_ventas')->get();
 
         $detalle_solicitud = DB::table('detalle_materiales')
                     ->join('materiales', 'materiales.id', 'detalle_materiales.materiale_id')
@@ -108,6 +136,24 @@ class SalesController extends Controller
             return redirect()->route('solicitud.create')->with(['message' => 'debe agregar materiales a la solicitud', 'alert-type' => 'info']);  
         }
     }
+
+    public function solicitud_cliente_create()
+    {
+        return view('sales.solicitud_cliente_create');
+    }
+    public function solicitud_cliente_storage(Request $datos)
+    {
+        DB::table('clientes')->insert([
+            'nombre_completo' => $datos->nombre_completo,
+            'nit' => $datos->nit,
+            'telefono_movil' => $datos->telefono_movil,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
+        ]);
+        return redirect()->route('solicitud.create')->with(['message' => 'Cliente Agregado correctamente..', 'alert-type' => 'info']);  
+    }
+
+
     //materiales--------------------------------------------------------------------
     //-------------------------------------------------------------------------------
     public function materiales_index()
@@ -118,6 +164,18 @@ class SalesController extends Controller
                     ->orderBy('materiales.created_at','desc')
                     ->paginate(setting('admin.paginate'));
         $criterio = '';
+        return view('sales.materiales_index',compact('materiales','criterio'));
+    }
+    
+    public function materiales_search($criterio)
+    {
+        $materiales = DB::table('materiales')
+                    ->join('clasificaciones','clasificaciones.id','materiales.clasificacion_id')
+                    ->select('materiales.*', 'clasificaciones.nombre as clasificacion')
+                    ->where('materiales.nombre', 'like', '%'.$criterio.'%')
+                    ->orderBy('materiales.created_at','desc')
+                    ->paginate(setting('admin.paginate'));
+        
         return view('sales.materiales_index',compact('materiales','criterio'));
     }
 

@@ -25,7 +25,7 @@
                         <font color="{{ config('voyager.primary_color') }}"><h3>Aprobar Pedido # {{ $pedido->id }}</h3></font>
                         </div>
                         <div class="col-xs-12"><hr></div>
-                        <div class="col-xs-12 col-md-10">
+                        <div class="col-xs-12 col-sm-10 col-md-10">
                             <div class="table-responsive">
                                 <table class="table table-hover">
                                     <thead>
@@ -64,7 +64,7 @@
                                 </table>
                             </div>
                         </div>
-                        <div class="col-xs-12 col-md-2">
+                        <div class="col-xs-12 col-sm-2 col-md-2">
                             
                             <div class="form-group">
                                 <img src="{{ asset('storage/'.$pedido->avatar) }}" alt="" class="img img-responsive">

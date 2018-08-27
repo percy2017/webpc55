@@ -40,15 +40,28 @@
                                         </select>
                                     </div>
                                 
-                                    <div class="form-group col-md-4">
-                                        <a>Proveedores</a>
+                                    <div class="form-group col-md-3">
+                                        <a href="#" id="pedidos_proveedor_create" data-toggle="modal" data-target="#exampleModal">Proveedores <i class="voyager-paper-plane"></i></a>
+                                        
+                                        <!-- <div aling="center">
                                         <a href="{{ route('voyager.proveedores.create') }}"> - Nuevo</a>
+                                        </div> -->
                                         <select name="proveedor_id" id="" class="form-control select2">
+                                            <!-- <option value="0">
+                                                <button type="button" onclick="items_index('{{ route('items.index') }}')"  class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                                                    Nuevo
+                                                </button>
+                                            </option> -->
                                             @foreach($proveedores as $item)
                                                 <option value="{{ $item->id }}">{{ $item->nombre }}</option>
                                             @endforeach
                                         </select>
                                     </div>
+                                    <!-- <div class="col-md-1">
+                                    <button type="button" onclick="items_index('{{ route('items.index') }}')"  class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                                                    Nuevo
+                                                </button>
+                                    </div> -->
 
                                     <div class="form-group col-md-4">
                                         <a>Tipo de pedido</a>
@@ -99,7 +112,7 @@
                                 <div class="col-xs-12">
                                     <hr>
                                 </div> 
-                                <div align="right">     
+                                <div aling="right">     
                                     <input type="checkbox" name="aprobacion"> Enviar para Aprobación          
                                     <button type="submit" class="btn btn-primary">Guardar</button>
                                 </div>
@@ -118,7 +131,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <!-- <h3 class="modal-title" id="exampleModalLabel">Items</h3> -->
-                    <font color="{{ config('voyager.primary_color') }}">Items</font>
+                    <!-- <font color="{{ config('voyager.primary_color') }}">Modal</font> -->
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
@@ -140,7 +153,7 @@
 
 @else 
     @section('content')
-        <div align="center">
+        <div aling="center">
             <h2>
                 {{ setting('admin.mensaje_no_autorizado') }}
             </h2>        
@@ -158,11 +171,15 @@
         });
 
         //items--------------------------------------------------------
+        //-------------------------------------------------------------
         function items_index(urli)
         {
             $.ajax({
                 url: urli,
-                type: 'get',
+                beforesend: function()
+                {
+                    $('#items_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
+                },
                 success: function(result) {
                     //$( "#weather-temp" ).html( "<strong>" + result + "</strong> degrees" );
                     $('#items_ajax').empty().html(result);
@@ -200,16 +217,17 @@
         {
             if (e.keyCode == 13)
             {
-                var criterio = document.getElementById('criterio').value;
-                // var criterio = $('#criterio').value;
-                 
+                var criterio = document.getElementById('criterio').value; 
                 var urli = '{{ route('items.search', 'criterio') }}';
                     urli = urli.replace('criterio', criterio);
                     $.ajax({
                         url: urli,
-                        type: 'get',
+                        beforesend: function()
+                        {
+                            $('#items_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
+                        },
                         success: function(result) {
-                            //$( "#weather-temp" ).html( "<strong>" + result + "</strong> degrees" );
+                            
                             $('#items_ajax').empty().html(result);
                         }
                     });
@@ -218,7 +236,7 @@
         }
 
         //detalle_pedido---------------------------------------------------------------------
-
+        //------------------------------------------------------------------------------------
         function detalle_pedido_index()
         {
             $.ajax({
@@ -298,17 +316,57 @@
         }
 
         //paginacion--------------------------------------------------------
+        //------------------------------------------------------------------
         $(document).on('click', '.pagination li a', function(event) {
             event.preventDefault();
             var url = $(this).attr("href");
             $.ajax({
                 url: url,
-                type: 'get',
+                beforesend: function()
+                {
+                    $('#items_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
+                },
                 success: function(result) {
                     //$( "#weather-temp" ).html( "<strong>" + result + "</strong> degrees" );
                     $('#items_ajax').empty().html(result);
                 }
             });
         });
+
+        //proveedores--------------------------------------------------------
+        //------------------------------------------------------------------
+
+        $( "#pedidos_proveedor_create" ).click(function() {
+            
+            //alert('{{ route('pedidos.proveedor.create') }}');
+
+            $.ajax({
+                url: '{{ route('pedidos.proveedor.create') }}',
+                beforesend: function()
+                {
+                    $('#items_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
+                },
+                success: function(result) 
+                {
+                    $('#items_ajax').empty().html(result);   
+                }
+            });
+        });
+       
+        // function pedidos_proveedor_create()
+        // {
+        //     alert('{{ route('pedidos.proveedor.create') }}');
+        //         $.ajax({
+        //             url: '{{ route('pedidos.proveedor.create') }}'
+        //             beforesend: function()
+        //             {
+        //                 $('#items_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
+        //             },
+        //             success: function(result) 
+        //             {
+        //                 $('#items_ajax').empty().html(result);   
+        //             }
+        //         });
+        // }
     </script>
 @endsection
