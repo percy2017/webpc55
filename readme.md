@@ -1,4 +1,4 @@
-<h1>Proyecto Turiro - Webpc</h1>
+<h1>Proyecto Turiro - Webpc 1.1</h1>
 
 ## Introducción
     El proyecto turiro es software realizado por la empresa LoginWeb, para la empresa Turiro SA.
