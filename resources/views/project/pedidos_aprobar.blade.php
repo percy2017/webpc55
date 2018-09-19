@@ -47,7 +47,7 @@
                                                 <td class="hidden-xs"><font color="{{ config('voyager.primary_color') }}">{{ $item->descripcion }}</form></td>
                                                 <td><font color="{{ config('voyager.primary_color') }}">{{ $item->cantidad }}</font></td>
                                                 <td><font color="{{ config('voyager.primary_color') }}">{{ $item->precio }}</font></td> 
-                                                <td><font color="{{ config('voyager.primary_color') }}">{{ number_format($item->precio * $item->cantidad, 2, ',', ' ') }}</form></t
+                                                <td><font color="{{ config('voyager.primary_color') }}">{{ number_format($item->precio * $item->cantidad, 2, ',', ' ') }}</form></td>
                                                 <?php $total = $total + ($item->cantidad * $item->precio); ?>
                                             </tr>
                                         @endforeach
@@ -79,8 +79,10 @@
                         <div class="col-xs-12"><hr></div>
                         
                         <div class="col-xs-12" align="center">
-                            <button data-toggle="modal" data-target="#aprobar_modal" class="btn btn-primary">Aprobar</button>
-                            <button data-toggle="modal" data-target="#comfir_modal" class="btn btn-danger">Rechazar</button>
+                            <button data-toggle="modal" data-target="#aprobar_modal" class="btn btn-primary"><i class="voyager-check"></i> Aprobar</button>
+                            <button data-toggle="modal" data-target="#comfir_modal" class="btn btn-danger"><i class="voyager-skull"></i> Rechazar</button>
+                            <a href="{{ route('pedidos.pdf', $pedido->id) }}" target="_blank" class="btn btn-default"><i class="voyager-treasure-open"></i> PDF</a>
+
                         </div>
                     
                     </div>

@@ -20,6 +20,8 @@ Route::post('/register','Auth\RegisterController@register')->name('register');
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 
+    //PROJECT------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------
     Route::get('/project','ProjectController@index');
     Route::get('/project/report','ProjectController@report')->name('project.report');
     Route::get('/project/report/query/{table}/{table_option}','ProjectController@report_query')->name('project.query');   
@@ -39,6 +41,7 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/project/pedidos/contabilizar/archivar/{pedido_id}','ProjectController@pedidos_archivar')->name('pedidos.archivar');
         Route::get('/project/pedidos/proveedor/create','ProjectController@pedidos_proveedor_create')->name('pedidos.proveedor.create');
         Route::post('/project/pedidos/proveedor/stotage','ProjectController@pedidos_proveedor_storage')->name('pedidos.proveedor.storage');
+        Route::get('/project/pedidos/pdf/{pedido_id}','ProjectController@pedidos_pdf')->name('pedidos.pdf');
 
         Route::get('/project/items/index','ProjectController@items_index')->name('items.index');
         Route::get('/project/items/create/{criterip}','ProjectController@items_create')->name('items.create');
@@ -50,7 +53,10 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/project/detalle_pedido/trash','ProjectController@detalle_pedido_trash')->name('detalle_pedido.trash');
         Route::get('/project/detalle_pedido/delete/{item_id}','ProjectController@detalle_pedido_delete')->name('detalle_pedido.delete');
         Route::get('/project/detalle_pedido/edit/{item_id}/{campo}/{valor}','ProjectController@detalle_pedido_edit')->name('detalle_pedido.edit');
-    //--------------------------------------------------------------------------------------------------------------        
+        
+        Route::get('/project/cheque/create','ProjectController@cheque_create')->name('project_cheque_create');
+
+    //----------------------------------------------------------------------------------------------------   //seguridad     -----------------------------------------------------------
     Route::get('/security','SecurityController@index');
     Route::get('/sales','SalesController@index');
     Route::get('/sales/report','SalesController@report')->name('sales.report');
@@ -74,4 +80,22 @@ Route::group(['prefix' => 'admin'], function () {
         Route::get('/sales/detalle_solictud/delete/{material_id}','SalesController@detalle_solicitud_delete')->name('ds.delete');
         Route::get('/sales/detalle_solictud/trash','SalesController@detalle_solicitud_trash')->name('ds.trash');
         Route::get('/sales/detalle_solictud/edit/{id}/{cantidad}','SalesController@detalle_solicitud_edit')->name('ds.edit');
-});
+
+
+        //--------------------------------------------------------------------------------------------------------------   //producion     -----------------
+
+        //almacen
+        //---------------------------
+
+        Route::get('/warehouse/materiales/index','WarehouseCrontroller@materiales_index')->name('warehouse_materiales_index');
+        Route::get('/warehouse/materiales/create','WarehouseCrontroller@materiales_create')->name('warehouse_materiales_create');
+        Route::get('/warehouse/insumos/index','WarehouseCrontroller@insumos_index')->name('warehouse_insumo_index');
+
+        Route::get('/warehouse/insumos/storage/{tipo_insumo_id}','WarehouseCrontroller@insumos_storage')->name('warehouse_insumo_storage');   
+        Route::get('/warehouse/insumos/delete/{tipo_insumo_id}','WarehouseCrontroller@insumos_delete')->name('warehouse_insumo_delete');   
+        Route::get('/warehouse/insumos/trash','WarehouseCrontroller@tipo_insumos_trash')->name('warehouse_insumo_trash');
+
+
+        Route::get('/warehouse/tipo_insumos/crud/index','WarehouseCrontroller@tipo_insumos_index')->name('warehouse_tipo_insumos_index');   
+        Route::get('/warehouse/tipo_insumos/update/{id}/{cantidad}','WarehouseCrontroller@tipo_insumos_update')->name('warehouse_tipo_insumos_update');   
+    });

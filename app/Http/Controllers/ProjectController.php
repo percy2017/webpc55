@@ -203,7 +203,11 @@ class ProjectController extends Controller
     }
     public function pedidos_edit($id)
     {
-        $pedido = DB::table('pedidos')->find($id);
+        $pedido = DB::table('pedidos')
+                    ->join('estados','estados.id','pedidos.estado_id')
+                    ->select('pedidos.*','estados.nombre as estado')
+                    ->where('pedidos.id',$id)
+                    ->first($id);
 
         $rechazo = DB::table('rechazos')
                         ->where('rechazos.pedido_id', $id)
@@ -247,17 +251,14 @@ class ProjectController extends Controller
             $arreglo[$item->aux_id] = $new;
     
             \Session::put('detalle_pedido',$arreglo);
-        }
-        
-        
-                
+        }                
         return view('project.pedidos_edit', compact('proyectos','tipos','proveedores','pagos','pedido','detalle_pedido','rechazo'));
     }
     public function pedidos_estado($id, $estado)
     {
         DB::table('pedidos')
             ->where('id', $id)
-            ->update(['estado_id' => $estado]);
+            ->update(['estado_id' => $estado, 'updated_at' => Carbon::now()]);
         
         DB::table('estados_cambios')->insert([
             'pedido_id' => $id,
@@ -266,7 +267,7 @@ class ProjectController extends Controller
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now()
         ]);
-        //return redirect()->back()->with(['message' => 'Tu solicitud fue enviada corretamente..!', 'alert-type' => 'info']);    
+        
     }
 
     public function pedidos_cola()
@@ -344,15 +345,13 @@ class ProjectController extends Controller
 
     public function pedidos_final(Request $datos)
     {
-        //return $datos;
-        // return $datos;
         DB::table('pedidos')
             ->where('id', $datos->pedido_id)
             ->update(['estado_id' => 6, 'pago_id' => $datos->pago_id, 'datos' => $datos->datos]);
             $this->pedidos_estado($datos->pedido_id, 6);
 
         return redirect()->route('pedidos.cola')->with(['message' => 'Pedido registrado y enviado para contabilizar..!', 'alert-type' => 'info']);  
-        //return redirect()->back();
+        
     }
     public function pedidos_rechazo(Request $datos)
     {
@@ -444,7 +443,6 @@ class ProjectController extends Controller
                 ->select('items.*', 'detalle_pedidos.cantidad', 'detalle_pedidos.precio','maquinarias.codigo as maquinaria')
                 ->where('detalle_pedidos.pedido_id', $pedido_id)
                 ->get();
-        //return $dp;
         
         return view('project.pedidos_conta_detalle', compact('dp', 'maquinarias'));
     }
@@ -457,7 +455,7 @@ class ProjectController extends Controller
     
     public function pedidos_proveedor_create()
     {
-        return view('project.pedidos_proveedor_create');
+        return view('project.proveedor_create');
     }
     public function pedidos_proveedor_storage(Request $datos)
     {
@@ -471,6 +469,71 @@ class ProjectController extends Controller
 
         ]);
         return redirect()->route('pedidos.create')->with(['message' => 'Provedor agreado correctamente..', 'alert-type' => 'info']);
+    }
+
+    public function pedidos_pdf($id)
+    {
+        $pedido = DB::table('pedidos')
+                    ->join('estados','estados.id','pedidos.estado_id')
+                    ->select('pedidos.*','estados.nombre as estado')
+                    ->where('pedidos.id',$id)
+                    ->first($id);
+
+        $rechazo = DB::table('rechazos')
+                        ->where('rechazos.pedido_id', $id)
+                        ->orderBy('created_at','desc')
+                        ->first();
+
+        $detalle_pedido = DB::table('detalle_pedidos')
+                        ->join('pedidos', 'pedidos.id', 'detalle_pedidos.pedido_id')
+                        ->join('users', 'users.id', 'pedidos.user_id')
+                        ->join('items', 'items.id', 'detalle_pedidos.item_id')
+                        ->select('items.*', 'detalle_pedidos.cantidad', 'detalle_pedidos.precio', 'detalle_pedidos.maquinaria_id')
+                        ->where([['detalle_pedidos.pedido_id', $id],['users.id', Auth::user()->id]])
+                        ->get();
+
+        $solicitante = DB::table('users')->where('id',$pedido->user_id)->first();
+
+        $proyectos = DB::table('proyectos')->get();
+        $tipos = DB::table('tipos')->get();
+        $proveedores = DB::table('proveedores')->get();
+        $pagos = DB::table('pagos')->get();
+
+        
+        //vaciamos el array.
+        $this->detalle_pedido_trash();
+
+        //recupero todos los detalles del pedido
+        $dp = DB::table('detalle_pedidos')
+                ->where('detalle_pedidos.pedido_id',$id)
+                ->get();
+   
+        foreach($dp as $item)
+        {
+            //recuperamos (items * items) del pedido
+            $new = DB::table('detalle_pedidos')
+                ->join('items', 'items.id', 'detalle_pedidos.item_id')
+                ->select('items.id','items.nombre','items.descripcion','detalle_pedidos.cantidad','detalle_pedidos.precio', 'detalle_pedidos.maquinaria_id','detalle_pedidos.aux_id')
+                //->where([['detalle_pedidos.pedido_id', $id], ['detalle_pedidos.item_id',$item->id]])
+                ->where('detalle_pedidos.aux_id', $item->aux_id)
+                ->first();
+
+            $arreglo= \Session::get('detalle_pedido');
+            
+            $arreglo[$item->aux_id] = $new;
+    
+            \Session::put('detalle_pedido',$arreglo);
+        }         
+        
+
+        $dp= \Session::get('detalle_pedido');
+        
+        $maquinarias = DB::table('maquinarias')->get();
+
+        $vista = view('project.pedidos_pdf', compact('proyectos','tipos','proveedores','pagos','pedido','detalle_pedido','rechazo','dp','maquinarias','solicitante'));
+        $pdf = \App::make('dompdf.wrapper');
+        $pdf->loadHTML($vista);
+        return $pdf->stream();
     }
     //Items--------------------------------------------------------------------------------------------------------
     //-------------------------------------------------------------------------------------------------------------
@@ -594,5 +657,12 @@ class ProjectController extends Controller
     function random($length) { 
         return substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length); 
     } 
+
+    //cheque --------------------------------------------------------------
+    //---------------------------------------------------------------------
+    public function cheque_create()
+    {
+        return view('project.cheque_create');
+    }
 
 }

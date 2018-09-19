@@ -24,7 +24,12 @@
                 <div class="panel panel-bordered">
                     <div class="panel-body">
                         <div class="col-xs-12" align="center">
-                            <h3>Pedido #{{ $pedido->id }}</h3>
+                            <font color="{{ config('voyager.primary_color') }}">
+                            <h3>Pedido #{{ $pedido->id }} 
+                                <br><small>{{ $pedido->estado }} - <a href="{{ route('pedidos.pdf', $pedido->id) }}" target="_blank"><i class="voyager-treasure-open"></i></a></small> 
+                            </h3>
+                            </font>
+
                         </div>
                         <div class="col-xs-12"><hr></div>
                         <div class="col-xs-12">
@@ -33,7 +38,8 @@
                                     {{ csrf_field() }}
                                         <input type="text" name="pedido_id" value="{{ $pedido->id }}" hidden>
                                         <div class="form-group col-md-4">
-                                            <a>Proyectos</a>
+                                            <!-- <a>Proyectos</a> -->
+                                            <font color="{{ config('voyager.primary_color') }}">Proyectos</font>
                                             <select name="proyecto_id" id="" class="form-control select2">
                                                 @foreach($proyectos as $item)
                                                     @if($item->id == $pedido->proyecto_id)
@@ -46,7 +52,8 @@
                                         </div>
                                     
                                         <div class="form-group col-md-4">
-                                            <a>Proveedores</a>
+                                        <font color="{{ config('voyager.primary_color') }}"><a href="#" id="pedidos_proveedor_create" data-toggle="modal" data-target="#exampleModal">Proveedores <i class="voyager-paper-plane"></i></a>
+                                        </font>
                                             <select name="proveedor_id" id="" class="form-control select2">
                                                 @foreach($proveedores as $item)
                                                     @if($item->id == $pedido->proveedor_id)
@@ -60,10 +67,11 @@
                                         </div>
 
                                         <div class="form-group col-md-4">
-                                            <a>Tipo de pedido</a>
+                                            <!-- <a>Tipo de pedido</a> -->
+                                            <font color="{{ config('voyager.primary_color') }}">Tipo de pedido</font>
                                             <select name="tipo_id" id="" class="form-control select2">
                                                 @foreach($tipos as $item)
-                                                    @if($item->id == $pedido->proveedor_id)
+                                                    @if($item->id == $pedido->tipo_id)
                                                         <option value="{{ $item->id }}" selected>{{ $item->nombre }}</option>
                                                     @else
                                                         <option value="{{ $item->id }}">{{ $item->nombre }}</option>
@@ -73,17 +81,20 @@
                                         </div>
 
                                         <div class="form-group col-md-6">
-                                            <a>Referencia<a>
+                                            <!-- <a>Referencia<a> -->
+                                            <font color="{{ config('voyager.primary_color') }}">Referencia</font>
                                             <textarea name="referencia" id="" rows="3" class="form-control">{{ $pedido->referencia }}</textarea>
                                         </div>
                                     
                                         <div class="form-group col-md-6">
-                                            <a>Observaciones</a>
+                                            <!-- <a>Observaciones</a> -->
+                                            <font color="{{ config('voyager.primary_color') }}">Observaciones</font>
                                             <textarea name="observacion" id="" rows="3" class="form-control">{{ $pedido->observacion }}</textarea>
                                         </div>
                                         @if($pedido->estado_id === 3)
                                             <div class="form-group col-md-12">
-                                                <label for="" class="label label-danger">Motivo del Rechazo</label>
+                                            <font color="{{ config('voyager.primary_color') }}">Motivo del Rechazo</font>
+                                                <!-- <label for="" class="label label-danger">Motivo del Rechazo</label> -->
                                                 <textarea name="motivo" id="" rows="3" class="form-control">{{ $rechazo->motivo }}</textarea>
                                             </div>
                                         @endif
@@ -93,22 +104,24 @@
                                     </div>
                                     <div class="col-xs-12">
                                         <button type="button" onclick="items_index('{{ route('items.index') }}')"  class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                                            Agrega items
+                                        <i class="voyager-plus"></i> Agrega items
                                         </button>
                                         <button type="button" onclick="detalle_pedido_trash('{{ route('detalle_pedido.trash') }}')"  class="btn btn-warning">
-                                            Vaciar
+                                        <i class="voyager-trash"></i> Vaciar
                                         </button>
                                         <div id="detalle_pedido_index"></div>
                                     </div>
                                     <div class="col-xs-12">
                                         <hr>
                                     </div>
-                                    <div align="right">                            
-                                        <button type="submit" class="btn btn-primary">Enviar</button>
+                                    <div align="right">                   
+                                        
+                                        <button type="submit" class="btn btn-primary"><i class="voyager-data"></i> Enviar</button>
                                     </div>
                                 
                                 </form>
                             </fieldset>
+                            <!-- <a href="#" class="btn btn-default"><i class="voyager-treasure-open"></i> PDF</a>          -->
                         </div>
                         
                     </div>
@@ -121,7 +134,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <font color="{{ config('voyager.primary_color') }}">Items</font>
+                    <!-- <font color="{{ config('voyager.primary_color') }}">Items</font> -->
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
@@ -162,6 +175,7 @@
       //items--------------------------------------------------------
       function items_index(urli)
       {
+        $('#items_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
           $.ajax({
               url: urli,
               type: 'get',
@@ -174,6 +188,7 @@
       
       function items_create(urli)
       {
+        $('#items_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
           $.ajax({
               url: urli,
               type: 'get',
@@ -223,6 +238,7 @@
 
       function detalle_pedido_index()
       {
+        $('#detalle_pedido_index').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
           $.ajax({
               url: '{{ route('detalle_pedido.index') }}',
               type: 'get',
@@ -287,7 +303,7 @@
           {
               urli = urli.replace('valor',valor);
               //alert(urli);
-              console.log(urli);
+              //console.log(urli);
               $.ajax({
                   url: urli,
                   type: 'get',
@@ -302,6 +318,8 @@
       //paginacion--------------------------------------------------------
       $(document).on('click', '.pagination li a', function(event) {
           event.preventDefault();
+
+          $('#items_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
           var url = $(this).attr("href");
           $.ajax({
               url: url,
@@ -312,6 +330,25 @@
               }
           });
       });
+
+        //proveedores--------------------------------------------------------
+        //------------------------------------------------------------------
+
+        $( "#pedidos_proveedor_create" ).click(function() {
+            
+            //alert('{{ route('pedidos.proveedor.create') }}');
+            
+            $('#items_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
+
+            $.ajax({
+                url: '{{ route('pedidos.proveedor.create') }}',
+                
+                success: function(result) 
+                {
+                    $('#items_ajax').empty().html(result);   
+                }
+            });
+        });
 
 </script>
 @endsection

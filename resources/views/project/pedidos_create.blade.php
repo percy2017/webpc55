@@ -24,7 +24,7 @@
                     <div class="panel-body">
                         <div class="col-xs-12" align="center">
                             
-                            <font color="{{ config('voyager.primary_color') }}"><h3>Nuevo Pedido</h3></font>
+                            <font color="{{ config('voyager.primary_color') }}"><h3>Nuevo Pedido <i class="voyager-basket"></i> </h3></font>
                         </div>
                         <div class="col-xs-12"><hr></div>
                         <div class="col-xs-12">
@@ -40,7 +40,7 @@
                                         </select>
                                     </div>
                                 
-                                    <div class="form-group col-md-3">
+                                    <div class="form-group col-md-4">
                                         <a href="#" id="pedidos_proveedor_create" data-toggle="modal" data-target="#exampleModal">Proveedores <i class="voyager-paper-plane"></i></a>
                                         
                                         <!-- <div aling="center">
@@ -102,19 +102,21 @@
                                 </div>
                                 <div class="col-xs-12">
                                     <button type="button" onclick="items_index('{{ route('items.index') }}')"  class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                                        Agregar items
+                                        <i class="voyager-plus"></i> Agregar items
                                     </button>
                                     <button type="button" onclick="detalle_pedido_trash('{{ route('detalle_pedido.trash') }}')"  class="btn btn-warning">
-                                        Vaciar
+                                        <i class="voyager-trash"></i> Vaciar
                                     </button>
                                     <div id="detalle_pedido_index"></div>
                                 </div>
                                 <div class="col-xs-12">
                                     <hr>
                                 </div> 
-                                <div aling="right">     
-                                    <input type="checkbox" name="aprobacion"> Enviar para Aprobación          
-                                    <button type="submit" class="btn btn-primary">Guardar</button>
+                                <div align="right">    
+                                    
+                                    <button type="submit" class="btn btn-primary"><i class="voyager-data"></i> Guardar</button>
+                                    <input type="checkbox" name="aprobacion" class="toggleswitch"> Enviar para aprobación     
+                                    
                                 </div>
                             </form>
                         </div>
@@ -174,12 +176,9 @@
         //-------------------------------------------------------------
         function items_index(urli)
         {
+            $('#items_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
             $.ajax({
                 url: urli,
-                beforesend: function()
-                {
-                    $('#items_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
-                },
                 success: function(result) {
                     //$( "#weather-temp" ).html( "<strong>" + result + "</strong> degrees" );
                     $('#items_ajax').empty().html(result);
@@ -189,6 +188,7 @@
         
         function items_create(urli)
         {
+            $('#items_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
             $.ajax({
                 url: urli,
                 type: 'get',
@@ -217,15 +217,12 @@
         {
             if (e.keyCode == 13)
             {
+                // $('#items_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
                 var criterio = document.getElementById('criterio').value; 
                 var urli = '{{ route('items.search', 'criterio') }}';
                     urli = urli.replace('criterio', criterio);
                     $.ajax({
                         url: urli,
-                        beforesend: function()
-                        {
-                            $('#items_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
-                        },
                         success: function(result) {
                             
                             $('#items_ajax').empty().html(result);
@@ -239,6 +236,7 @@
         //------------------------------------------------------------------------------------
         function detalle_pedido_index()
         {
+            $('#detalle_pedido_index').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
             $.ajax({
                 url: '{{ route('detalle_pedido.index') }}',
                 type: 'get',
@@ -319,13 +317,11 @@
         //------------------------------------------------------------------
         $(document).on('click', '.pagination li a', function(event) {
             event.preventDefault();
+            $('#items_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
             var url = $(this).attr("href");
             $.ajax({
                 url: url,
-                beforesend: function()
-                {
-                    $('#items_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
-                },
+                
                 success: function(result) {
                     //$( "#weather-temp" ).html( "<strong>" + result + "</strong> degrees" );
                     $('#items_ajax').empty().html(result);
@@ -339,13 +335,12 @@
         $( "#pedidos_proveedor_create" ).click(function() {
             
             //alert('{{ route('pedidos.proveedor.create') }}');
+            
+            $('#items_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
 
             $.ajax({
                 url: '{{ route('pedidos.proveedor.create') }}',
-                beforesend: function()
-                {
-                    $('#items_ajax').empty().html('<img src="{{ asset('storage/'.setting('admin.load')) }}" class="img-responsive">');
-                },
+                
                 success: function(result) 
                 {
                     $('#items_ajax').empty().html(result);   

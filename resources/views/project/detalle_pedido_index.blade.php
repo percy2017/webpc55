@@ -38,7 +38,7 @@
                 <td></td>
                 <td></td>
                 <td></td>
-                
+                <td></td>
                 <td><a>Total:</a></td>
                 <td><a>{{ number_format($total, 2, ',', ' ') }}</a></td>
             </tr>
